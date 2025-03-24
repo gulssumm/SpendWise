@@ -1,0 +1,14 @@
+C:\Users\21180\source\repos\SpendWiseSolution\SpendWise\bin\Debug\net8.0\SpendWise.exe
+C:\Users\21180\source\repos\SpendWiseSolution\SpendWise\bin\Debug\net8.0\SpendWise.deps.json
+C:\Users\21180\source\repos\SpendWiseSolution\SpendWise\bin\Debug\net8.0\SpendWise.runtimeconfig.json
+C:\Users\21180\source\repos\SpendWiseSolution\SpendWise\bin\Debug\net8.0\SpendWise.dll
+C:\Users\21180\source\repos\SpendWiseSolution\SpendWise\bin\Debug\net8.0\SpendWise.pdb
+C:\Users\21180\source\repos\SpendWiseSolution\SpendWise\obj\Debug\net8.0\SpendWise.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\21180\source\repos\SpendWiseSolution\SpendWise\obj\Debug\net8.0\SpendWise.AssemblyInfoInputs.cache
+C:\Users\21180\source\repos\SpendWiseSolution\SpendWise\obj\Debug\net8.0\SpendWise.AssemblyInfo.cs
+C:\Users\21180\source\repos\SpendWiseSolution\SpendWise\obj\Debug\net8.0\SpendWise.csproj.CoreCompileInputs.cache
+C:\Users\21180\source\repos\SpendWiseSolution\SpendWise\obj\Debug\net8.0\SpendWise.dll
+C:\Users\21180\source\repos\SpendWiseSolution\SpendWise\obj\Debug\net8.0\refint\SpendWise.dll
+C:\Users\21180\source\repos\SpendWiseSolution\SpendWise\obj\Debug\net8.0\SpendWise.pdb
+C:\Users\21180\source\repos\SpendWiseSolution\SpendWise\obj\Debug\net8.0\SpendWise.genruntimeconfig.cache
+C:\Users\21180\source\repos\SpendWiseSolution\SpendWise\obj\Debug\net8.0\ref\SpendWise.dll

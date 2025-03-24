@@ -1,0 +1,16 @@
+2025-03-24T12:36:23.8876996+00:00 Microsoft.Testing.Platform.Builder.TestApplication INFORMATION Version: 1.4.3+c252b64ad913ea9411fc5d17bfd5580d2d061497
+2025-03-24T12:36:23.9045105+00:00 Microsoft.Testing.Platform.Builder.TestApplication INFORMATION Logging mode: asynchronous
+2025-03-24T12:36:23.9057235+00:00 Microsoft.Testing.Platform.Builder.TestApplication INFORMATION Logging level: Information
+2025-03-24T12:36:23.9057300+00:00 Microsoft.Testing.Platform.Builder.TestApplication INFORMATION CreateBuilderAsync entry time: 12:36:23.864
+2025-03-24T12:36:23.9078221+00:00 Microsoft.Testing.Platform.Builder.TestApplication INFORMATION PID: 1004
+2025-03-24T12:36:23.9080351+00:00 Microsoft.Testing.Platform.Builder.TestApplication INFORMATION Runtime information: win-x64 - .NET 8.0.14
+2025-03-24T12:36:23.9080486+00:00 Microsoft.Testing.Platform.Builder.TestApplication INFORMATION Runtime location: C:\Program Files\dotnet\shared\Microsoft.NETCore.App\8.0.14\System.Private.CoreLib.dll
+2025-03-24T12:36:23.9080572+00:00 Microsoft.Testing.Platform.Builder.TestApplication INFORMATION IsDynamicCodeSupported: True
+2025-03-24T12:36:23.9080599+00:00 Microsoft.Testing.Platform.Builder.TestApplication INFORMATION Test module: C:\Users\21180\source\repos\SpendWiseSolution\TestProject1\bin\Debug\net8.0\TestProject1.dll
+2025-03-24T12:36:23.9082757+00:00 Microsoft.Testing.Platform.Builder.TestApplication INFORMATION Command line arguments: '--server --diagnostic --diagnostic-verbosity Information --diagnostic-output-directory C:\Users\21180\source\repos\SpendWiseSolution\TestProject1\bin\Debug\net8.0\Log --results-directory C:\Users\21180\source\repos\SpendWiseSolution\TestResults --client-port 50326'
+2025-03-24T12:36:23.9096292+00:00 Microsoft.Testing.Platform.Builder.TestApplication INFORMATION TESTINGPLATFORM_DEFAULT_HANG_TIMEOUT: ''
+2025-03-24T12:36:23.9314782+00:00 Microsoft.Testing.Platform.Hosts.TestHostBuilder INFORMATION Setting RegisterEnvironmentVariablesConfigurationSource: 'True'
+2025-03-24T12:36:23.9350657+00:00 Microsoft.Testing.Platform.Configurations.JsonConfigurationSource+JsonConfigurationProvider INFORMATION Config file 'C:\Users\21180\source\repos\SpendWiseSolution\TestProject1\bin\Debug\net8.0\TestProject1.testconfig.json' not found.
+2025-03-24T12:36:23.9361925+00:00 Microsoft.Testing.Platform.Hosts.TestHostBuilder INFORMATION Setting PlatformExitProcessOnUnhandledException: 'False', config file: False environment variable:  VSTest mode: False
+2025-03-24T12:36:24.0761814+00:00 Microsoft.Testing.Platform.Requests.TestHostTestFrameworkInvoker INFORMATION Test framework UID: 'MSTestExtension' Version: '3.6.4' DisplayName: 'MSTest' Description: 'MSTest Framework for Microsoft Testing Platform'
+2025-03-24T12:36:24.1567834+00:00 Microsoft.Testing.Extensions.VSTestBridge.ObjectModel.MessageLoggerAdapter INFORMATION Test Parallelization enabled for C:\Users\21180\source\repos\SpendWiseSolution\TestProject1\bin\Debug\net8.0\TestProject1.dll (Workers: 12, Scope: MethodLevel)
