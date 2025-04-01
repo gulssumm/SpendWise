@@ -978,8 +978,19 @@
         }
       },
       "SpendWise/1.0.0": {
+        "dependencies": {
+          "SpendWise.Logic": "1.0.0"
+        },
         "runtime": {
           "SpendWise.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "SpendWise.Logic/1.0.0": {
+        "runtime": {
+          "SpendWise.Logic.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -1215,6 +1226,11 @@
       "hashPath": "system.text.json.6.0.10.nupkg.sha512"
     },
     "SpendWise/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "SpendWise.Logic/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

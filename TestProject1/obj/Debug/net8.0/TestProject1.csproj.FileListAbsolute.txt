@@ -1,3 +1,5 @@
+C:\Users\21180\source\repos\SpendWiseSolution\TestProject1\bin\Debug\net8.0\.msCoverageSourceRootsMapping_TestProject1
+C:\Users\21180\source\repos\SpendWiseSolution\TestProject1\bin\Debug\net8.0\.msCoverageExtensionSourceRootsMapping_TestProject1
 C:\Users\21180\source\repos\SpendWiseSolution\TestProject1\obj\Debug\net8.0\TestProject1.csproj.AssemblyReference.cache
 C:\Users\21180\source\repos\SpendWiseSolution\TestProject1\obj\Debug\net8.0\TestProject1.GeneratedMSBuildEditorConfig.editorconfig
 C:\Users\21180\source\repos\SpendWiseSolution\TestProject1\obj\Debug\net8.0\TestProject1.AssemblyInfoInputs.cache
@@ -7,8 +9,7 @@ C:\Users\21180\source\repos\SpendWiseSolution\TestProject1\obj\Debug\net8.0\Test
 C:\Users\21180\source\repos\SpendWiseSolution\TestProject1\obj\Debug\net8.0\TestProject1.genautoregisteredextensionsinputcache.cache
 C:\Users\21180\source\repos\SpendWiseSolution\TestProject1\obj\Debug\net8.0\AutoRegisteredExtensions.cs
 C:\Users\21180\source\repos\SpendWiseSolution\TestProject1\obj\Debug\net8.0\TestPlatformEntryPoint.cs
-C:\Users\21180\source\repos\SpendWiseSolution\TestProject1\bin\Debug\net8.0\.msCoverageSourceRootsMapping_TestProject1
-C:\Users\21180\source\repos\SpendWiseSolution\TestProject1\bin\Debug\net8.0\.msCoverageExtensionSourceRootsMapping_TestProject1
+C:\Users\21180\source\repos\SpendWiseSolution\TestProject1\obj\Debug\net8.0\TestProject1.sourcelink.json
 C:\Users\21180\source\repos\SpendWiseSolution\TestProject1\bin\Debug\net8.0\testhost.dll
 C:\Users\21180\source\repos\SpendWiseSolution\TestProject1\bin\Debug\net8.0\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
 C:\Users\21180\source\repos\SpendWiseSolution\TestProject1\bin\Debug\net8.0\Microsoft.TestPlatform.AdapterUtilities.dll
@@ -250,7 +251,9 @@ C:\Users\21180\source\repos\SpendWiseSolution\TestProject1\bin\Debug\net8.0\runt
 C:\Users\21180\source\repos\SpendWiseSolution\TestProject1\bin\Debug\net8.0\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll
 C:\Users\21180\source\repos\SpendWiseSolution\TestProject1\bin\Debug\net8.0\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll
 C:\Users\21180\source\repos\SpendWiseSolution\TestProject1\bin\Debug\net8.0\SpendWise.dll
+C:\Users\21180\source\repos\SpendWiseSolution\TestProject1\bin\Debug\net8.0\SpendWise.Logic.dll
 C:\Users\21180\source\repos\SpendWiseSolution\TestProject1\bin\Debug\net8.0\SpendWise.pdb
+C:\Users\21180\source\repos\SpendWiseSolution\TestProject1\bin\Debug\net8.0\SpendWise.Logic.pdb
 C:\Users\21180\source\repos\SpendWiseSolution\TestProject1\bin\Debug\net8.0\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.xml
 C:\Users\21180\source\repos\SpendWiseSolution\TestProject1\obj\Debug\net8.0\TestProj.494AA513.Up2Date
 C:\Users\21180\source\repos\SpendWiseSolution\TestProject1\obj\Debug\net8.0\TestProject1.dll

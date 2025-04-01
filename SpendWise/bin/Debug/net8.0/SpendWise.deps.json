@@ -7,14 +7,30 @@
   "targets": {
     ".NETCoreApp,Version=v8.0": {
       "SpendWise/1.0.0": {
+        "dependencies": {
+          "SpendWise.Logic": "1.0.0"
+        },
         "runtime": {
           "SpendWise.dll": {}
+        }
+      },
+      "SpendWise.Logic/1.0.0": {
+        "runtime": {
+          "SpendWise.Logic.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
         }
       }
     }
   },
   "libraries": {
     "SpendWise/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "SpendWise.Logic/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

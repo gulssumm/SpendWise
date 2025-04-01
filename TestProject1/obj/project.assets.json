@@ -1142,11 +1142,24 @@
       "SpendWise/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v8.0",
+        "dependencies": {
+          "SpendWise.Logic": "1.0.0"
+        },
         "compile": {
           "bin/placeholder/SpendWise.dll": {}
         },
         "runtime": {
           "bin/placeholder/SpendWise.dll": {}
+        }
+      },
+      "SpendWise.Logic/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "compile": {
+          "bin/placeholder/SpendWise.Logic.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/SpendWise.Logic.dll": {}
         }
       }
     }
@@ -2542,6 +2555,11 @@
       "type": "project",
       "path": "../SpendWise/SpendWise.csproj",
       "msbuildProject": "../SpendWise/SpendWise.csproj"
+    },
+    "SpendWise.Logic/1.0.0": {
+      "type": "project",
+      "path": "../SpendWise.Logic/SpendWise.Logic.csproj",
+      "msbuildProject": "../SpendWise.Logic/SpendWise.Logic.csproj"
     }
   },
   "projectFileDependencyGroups": {

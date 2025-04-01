@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Linq;
+using SpendWise.Logic.Interfaces; // Import logic layer
+using SpendWise.Logic.Models;
+using SpendWise.Logic.Services;
 
 class Program
 {
-    static List<Transaction> transactions = new List<Transaction>();
-    const string FilePath = "transactions.txt";
+    static ITransactionService transactionService = new TransactionService();
 
     static void Main()
     {
-        LoadTransactions(); // Load saved transactions at startup
-
         while (true)
         {
             Console.Clear();
@@ -74,8 +72,7 @@ class Program
         Console.Write("🔹 Is it an expense? (yes/no): ");
         bool isExpense = Console.ReadLine()?.Trim().ToLower() == "yes";
 
-        transactions.Add(new Transaction(description, amount, isExpense, category, DateTime.Now));
-        SaveTransactions();
+        transactionService.AddTransaction(description, amount, isExpense, category);
         Console.WriteLine("\n✅ Transaction added successfully!");
         Pause();
     }
@@ -84,6 +81,8 @@ class Program
     {
         Console.Clear();
         Console.WriteLine("📜 TRANSACTION HISTORY");
+        var transactions = transactionService.GetTransactions();
+
         if (transactions.Count == 0)
         {
             Console.WriteLine("\n⚠️ No transactions found.");
@@ -106,7 +105,7 @@ class Program
     static void CheckBalance()
     {
         Console.Clear();
-        decimal balance = transactions.Sum(t => t.IsExpense ? -t.Amount : t.Amount);
+        decimal balance = transactionService.GetBalance();
         Console.WriteLine("💰 ACCOUNT BALANCE");
         Console.WriteLine("=========================");
         Console.WriteLine($"🔹 Current Balance: ${balance:F2}");
@@ -118,26 +117,30 @@ class Program
     {
         Console.Clear();
         Console.Write("📆 Enter month (MM): ");
-        string monthInput = Console.ReadLine();
-        Console.Write("📆 Enter year (YYYY): ");
-        string yearInput = Console.ReadLine();
-
-        if (!int.TryParse(monthInput, out int month) || !int.TryParse(yearInput, out int year))
+        if (!int.TryParse(Console.ReadLine(), out int month))
         {
-            Console.WriteLine("\n❌ Invalid date format. Please enter a valid month and year.");
+            Console.WriteLine("\n❌ Invalid month format.");
             Pause();
             return;
         }
 
-        var filtered = transactions.Where(t => t.Date.Month == month && t.Date.Year == year).ToList();
-        if (filtered.Count == 0)
+        Console.Write("📆 Enter year (YYYY): ");
+        if (!int.TryParse(Console.ReadLine(), out int year))
+        {
+            Console.WriteLine("\n❌ Invalid year format.");
+            Pause();
+            return;
+        }
+
+        var report = transactionService.GetMonthlyReport(month, year);
+        if (report.Count == 0)
         {
             Console.WriteLine("\n⚠️ No transactions found for this month.");
         }
         else
         {
-            decimal income = filtered.Where(t => !t.IsExpense).Sum(t => t.Amount);
-            decimal expenses = filtered.Where(t => t.IsExpense).Sum(t => t.Amount);
+            decimal income = report.Where(t => !t.IsExpense).Sum(t => t.Amount);
+            decimal expenses = report.Where(t => t.IsExpense).Sum(t => t.Amount);
             decimal balance = income - expenses;
 
             Console.WriteLine("=================================");
@@ -151,36 +154,9 @@ class Program
         Pause();
     }
 
-    static void SaveTransactions()
-    {
-        using (StreamWriter writer = new StreamWriter(FilePath))
-        {
-            foreach (var t in transactions)
-            {
-                writer.WriteLine($"{t.Description}|{t.Amount}|{t.IsExpense}|{t.Category}|{t.Date}");
-            }
-        }
-    }
-
-    static void LoadTransactions()
-    {
-        if (!File.Exists(FilePath)) return;
-
-        foreach (var line in File.ReadAllLines(FilePath))
-        {
-            var data = line.Split('|');
-            if (data.Length == 5 && decimal.TryParse(data[1], out decimal amount) && DateTime.TryParse(data[4], out DateTime date))
-            {
-                transactions.Add(new Transaction(data[0], amount, bool.Parse(data[2]), data[3], date));
-            }
-        }
-    }
-
     static void Pause()
     {
         Console.WriteLine("\n🔹 Press any key to return to the menu...");
         Console.ReadKey();
     }
-
-    record Transaction(string Description, decimal Amount, bool IsExpense, string Category, DateTime Date);
 }
