@@ -1,17 +1,16 @@
-﻿using System;
+﻿using SpendWise.Data.Models;
 using System.Collections.Generic;
-using System.Transactions;
-using SpendWise.Logic.Models;
 
 namespace SpendWise.Logic.Interfaces
 {
     public interface ITransactionService
     {
-        void AddTransaction(string description, decimal amount, bool isExpense, string category);
+        void AddTransaction(string description, decimal amount, bool isExpense, CatalogItem category, User user);
         List<FinancialTransaction> GetTransactions();
         decimal GetBalance();
-        List<FinancialTransaction> GetMonthlyReport(int month, int year);
-        void LoadTransactions();
+        ProcessState GetProcessState();
         void SaveTransactions();
+        void LoadTransactions();
+        List<FinancialTransaction> GetMonthlyReport(int month, int year);
     }
 }

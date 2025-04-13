@@ -14,7 +14,18 @@
           "SpendWise.dll": {}
         }
       },
+      "SpendWise.Data/1.0.0": {
+        "runtime": {
+          "SpendWise.Data.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
       "SpendWise.Logic/1.0.0": {
+        "dependencies": {
+          "SpendWise.Data": "1.0.0"
+        },
         "runtime": {
           "SpendWise.Logic.dll": {
             "assemblyVersion": "1.0.0.0",
@@ -26,6 +37,11 @@
   },
   "libraries": {
     "SpendWise/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "SpendWise.Data/1.0.0": {
       "type": "project",
       "serviceable": false,
       "sha512": ""

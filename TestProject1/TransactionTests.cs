@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SpendWise.Logic.Models;
+using SpendWise.Data.Models;
 
 namespace SpendWise.Tests
 {

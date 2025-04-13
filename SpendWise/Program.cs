@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using System.Globalization;
 using SpendWise.Logic.Interfaces; // Import logic layer
-using SpendWise.Logic.Models;
 using SpendWise.Logic.Services;
+using SpendWise.Data.Repositeries;
+using SpendWise.Data.Interfaces;
+using SpendWise.Data.Models;
 
 class Program
 {
-    static ITransactionService transactionService = new TransactionService();
+    static ITransactionRepository repository = new TransactionRepository();
+    static ITransactionService transactionService = new TransactionService(repository);
 
     static void Main()
     {
@@ -54,38 +57,52 @@ class Program
     static void AddTransaction()
     {
         Console.Clear();
-        Console.WriteLine("📌 ADD TRANSACTION");
-        Console.Write("🔹 Enter description: ");
+        Console.WriteLine("ADD TRANSACTION");
+        Console.Write("Enter description: ");
         string description = Console.ReadLine();
 
-        Console.Write("🔹 Enter amount: ");
+        Console.Write("Enter amount: ");
         if (!decimal.TryParse(Console.ReadLine(), out decimal amount) || amount <= 0)
         {
-            Console.WriteLine("\n❌ Invalid amount. Please enter a positive number.");
+            Console.WriteLine("\n Invalid amount. Please enter a positive number.");
             Pause();
             return;
         }
 
-        Console.Write("🔹 Select category (Food, Bills, Salary, Other): ");
-        string category = Console.ReadLine();
+        Console.Write("Select category (Food, Bills, Salary, Other): ");
+        string categoryInput = Console.ReadLine();
+        // Convert to CatalogItem
+        var category = new CatalogItem
+        {
+            Name = categoryInput,
+            Description = $"Auto-generated for {categoryInput}"
+        };
 
-        Console.Write("🔹 Is it an expense? (yes/no): ");
+        Console.Write("Is it an expense? (yes/no): ");
         bool isExpense = Console.ReadLine()?.Trim().ToLower() == "yes";
 
-        transactionService.AddTransaction(description, amount, isExpense, category);
-        Console.WriteLine("\n✅ Transaction added successfully!");
+        // Mock User
+        var user = new User
+        {
+            Id = Guid.NewGuid(),
+            Name = "DefaultUser" 
+        };
+
+
+        transactionService.AddTransaction(description, amount, isExpense, category, user);
+        Console.WriteLine("\n Transaction added successfully!");
         Pause();
     }
 
     static void ViewTransactions()
     {
         Console.Clear();
-        Console.WriteLine("📜 TRANSACTION HISTORY");
+        Console.WriteLine("TRANSACTION HISTORY");
         var transactions = transactionService.GetTransactions();
 
         if (transactions.Count == 0)
         {
-            Console.WriteLine("\n⚠️ No transactions found.");
+            Console.WriteLine("\n No transactions found.");
         }
         else
         {
@@ -106,9 +123,9 @@ class Program
     {
         Console.Clear();
         decimal balance = transactionService.GetBalance();
-        Console.WriteLine("💰 ACCOUNT BALANCE");
+        Console.WriteLine("ACCOUNT BALANCE");
         Console.WriteLine("=========================");
-        Console.WriteLine($"🔹 Current Balance: ${balance:F2}");
+        Console.WriteLine($"Current Balance: ${balance:F2}");
         Console.WriteLine("=========================");
         Pause();
     }
@@ -116,7 +133,7 @@ class Program
     static void ViewMonthlyReport()
     {
         Console.Clear();
-        Console.Write("📆 Enter month (MM): ");
+        Console.Write("Enter month (MM): ");
         if (!int.TryParse(Console.ReadLine(), out int month))
         {
             Console.WriteLine("\n❌ Invalid month format.");
@@ -124,10 +141,10 @@ class Program
             return;
         }
 
-        Console.Write("📆 Enter year (YYYY): ");
+        Console.Write("Enter year (YYYY): ");
         if (!int.TryParse(Console.ReadLine(), out int year))
         {
-            Console.WriteLine("\n❌ Invalid year format.");
+            Console.WriteLine("\n Invalid year format.");
             Pause();
             return;
         }
@@ -135,7 +152,7 @@ class Program
         var report = transactionService.GetMonthlyReport(month, year);
         if (report.Count == 0)
         {
-            Console.WriteLine("\n⚠️ No transactions found for this month.");
+            Console.WriteLine("\n No transactions found for this month.");
         }
         else
         {
@@ -144,7 +161,7 @@ class Program
             decimal balance = income - expenses;
 
             Console.WriteLine("=================================");
-            Console.WriteLine($" 📅 Monthly Report: {CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)} {year}");
+            Console.WriteLine($"Monthly Report: {CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month)} {year}");
             Console.WriteLine("=================================");
             Console.WriteLine($" Total Income  : ${income:F2}");
             Console.WriteLine($" Total Expenses: ${expenses:F2}");
@@ -156,7 +173,7 @@ class Program
 
     static void Pause()
     {
-        Console.WriteLine("\n🔹 Press any key to return to the menu...");
+        Console.WriteLine("\n Press any key to return to the menu...");
         Console.ReadKey();
     }
 }

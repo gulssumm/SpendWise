@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SpendWise.Logic.Models;
+using SpendWise.Data;
 
-namespace SpendWise.Logic.Models
+namespace SpendWise.Data.Models
 {
     public class FinancialTransaction
     {

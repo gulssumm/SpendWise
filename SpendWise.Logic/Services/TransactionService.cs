@@ -1,70 +1,89 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Globalization;
-using System.Transactions;
+using SpendWise.Data.Interfaces;
+using SpendWise.Data.Models;
 using SpendWise.Logic.Interfaces;
-using SpendWise.Logic.Models;
 
 namespace SpendWise.Logic.Services
 {
     public class TransactionService : ITransactionService
     {
-        private readonly List<FinancialTransaction> transactions = new List<FinancialTransaction>();
-        private readonly string FilePath = "transactions.txt"; 
+        private readonly ITransactionRepository transactionRepository;
 
-        public void AddTransaction(string description, decimal amount, bool isExpense, string category)
+        public TransactionService(ITransactionRepository transactionRepository)
         {
-            transactions.Add(new FinancialTransaction(description, amount, isExpense, category, DateTime.Now));  // Updated
-            SaveTransactions();
+            this.transactionRepository = transactionRepository;
         }
 
-        public List<FinancialTransaction> GetTransactions()  // Updated
+        public void AddTransaction(string description, decimal amount, bool isExpense, CatalogItem category, User user)
         {
-            return transactions;
-        }
-
-        public decimal GetBalance()
-        {
-            return transactions.Sum(t => t.IsExpense ? -t.Amount : t.Amount);
-        }
-
-        public List<FinancialTransaction> GetMonthlyReport(int month, int year)  // Updated
-        {
-            return transactions.Where(t => t.Date.Month == month && t.Date.Year == year).ToList();
-        }
-
-        public void LoadTransactions()
-        {
-            if (!File.Exists(FilePath)) return;
-
-            foreach (var line in File.ReadAllLines(FilePath))
+            var transaction = new FinancialTransaction(description, amount, isExpense, category.Name, DateTime.Now);
+            var transactionEvent = new Event
             {
-                var data = line.Split('|');
-                if (data.Length == 5 &&
-                    !string.IsNullOrWhiteSpace(data[0]) &&
-                    decimal.TryParse(data[1], out decimal amount) &&
-                    bool.TryParse(data[2], out bool isExpense) &&
-                    !string.IsNullOrWhiteSpace(data[3]) &&
-                    DateTime.TryParse(data[4], out DateTime date))
-                {
-                    transactions.Add(new FinancialTransaction(data[0], amount, isExpense, data[3], date));  // Updated
-                }
+                UserId = user.Id,
+                Description = $"User {user.Name} added transaction: {description}, Amount: {amount}, Category: {category.Name}",
+                Timestamp = DateTime.Now
+            };
+
+            transactionRepository.AddTransaction(transaction);
+            transactionRepository.AddEvent(transactionEvent);
+        }
+
+        public List<FinancialTransaction> GetTransactions()
+        {
+            return transactionRepository.GetTransactions();
+        }
+
+        public ProcessState GetProcessState()
+        {
+            var transactions = transactionRepository.GetTransactions();
+            var state = new ProcessState();
+
+            foreach (var t in transactions)
+            {
+                if (t.IsExpense)
+                    state.TotalExpenses += t.Amount;
+                else
+                    state.TotalIncome += t.Amount;
             }
+
+            state.CurrentBalance = state.TotalIncome - state.TotalExpenses;
+            state.Transactions = transactions;
+
+            return state;
         }
 
         public void SaveTransactions()
         {
-            using (StreamWriter writer = new StreamWriter(FilePath))
+            var transactions = transactionRepository.GetTransactions();
+            transactionRepository.SaveTransactions(transactions);
+        }
+
+        public void LoadTransactions()
+        {
+            var loadedTransactions = transactionRepository.LoadTransactions();
+            foreach (var transaction in loadedTransactions)
             {
-                foreach (var transaction in transactions)
-                {
-                    writer.WriteLine($"{transaction.Description}|{transaction.Amount}|{transaction.IsExpense}|{transaction.Category}|{transaction.Date}");
-                }
+                transactionRepository.AddTransaction(transaction);
             }
+        }
+
+        public List<FinancialTransaction> GetMonthlyReport(int month, int year)
+        {
+            return transactionRepository
+                .GetTransactions()
+                .Where(t => t.Date.Month == month && t.Date.Year == year)
+                .ToList();
+        }
+
+        public decimal GetBalance()
+        {
+            var transactions = GetTransactions();
+            decimal income = transactions.Where(t => !t.IsExpense).Sum(t => t.Amount);
+            decimal expense = transactions.Where(t => t.IsExpense).Sum(t => t.Amount);
+            return income - expense;
         }
 
     }
 }
-
