@@ -3,6 +3,8 @@ C:\Users\21180\source\repos\SpendWiseSolution\SpendWise\bin\Debug\net8.0\SpendWi
 C:\Users\21180\source\repos\SpendWiseSolution\SpendWise\bin\Debug\net8.0\SpendWise.runtimeconfig.json
 C:\Users\21180\source\repos\SpendWiseSolution\SpendWise\bin\Debug\net8.0\SpendWise.dll
 C:\Users\21180\source\repos\SpendWiseSolution\SpendWise\bin\Debug\net8.0\SpendWise.pdb
+C:\Users\21180\source\repos\SpendWiseSolution\SpendWise\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.dll
+C:\Users\21180\source\repos\SpendWiseSolution\SpendWise\bin\Debug\net8.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
 C:\Users\21180\source\repos\SpendWiseSolution\SpendWise\bin\Debug\net8.0\SpendWise.Data.dll
 C:\Users\21180\source\repos\SpendWiseSolution\SpendWise\bin\Debug\net8.0\SpendWise.Logic.dll
 C:\Users\21180\source\repos\SpendWiseSolution\SpendWise\bin\Debug\net8.0\SpendWise.Logic.pdb

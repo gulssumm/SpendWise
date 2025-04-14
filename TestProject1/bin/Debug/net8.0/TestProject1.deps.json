@@ -9,6 +9,7 @@
       "TestProject1/1.0.0": {
         "dependencies": {
           "MSTest": "3.6.4",
+          "Microsoft.Extensions.DependencyInjection": "9.0.4",
           "Microsoft.NET.Test.Sdk": "17.12.0",
           "Microsoft.Testing.Extensions.CodeCoverage": "17.12.6",
           "Microsoft.Testing.Extensions.TrxReport": "1.4.3",
@@ -37,6 +38,25 @@
           "lib/netstandard2.0/Microsoft.DiaSymReader.dll": {
             "assemblyVersion": "2.0.0.0",
             "fileVersion": "2.0.23.22804"
+          }
+        }
+      },
+      "Microsoft.Extensions.DependencyInjection/9.0.4": {
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "9.0.4"
+        },
+        "runtime": {
+          "lib/net8.0/Microsoft.Extensions.DependencyInjection.dll": {
+            "assemblyVersion": "9.0.0.0",
+            "fileVersion": "9.0.425.16305"
+          }
+        }
+      },
+      "Microsoft.Extensions.DependencyInjection.Abstractions/9.0.4": {
+        "runtime": {
+          "lib/net8.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll": {
+            "assemblyVersion": "9.0.0.0",
+            "fileVersion": "9.0.425.16305"
           }
         }
       },
@@ -979,6 +999,7 @@
       },
       "SpendWise/1.0.0": {
         "dependencies": {
+          "Microsoft.Extensions.DependencyInjection": "9.0.4",
           "SpendWise.Logic": "1.0.0"
         },
         "runtime": {
@@ -989,6 +1010,9 @@
         }
       },
       "SpendWise.Data/1.0.0": {
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection": "9.0.4"
+        },
         "runtime": {
           "SpendWise.Data.dll": {
             "assemblyVersion": "1.0.0.0",
@@ -998,6 +1022,7 @@
       },
       "SpendWise.Logic/1.0.0": {
         "dependencies": {
+          "Microsoft.Extensions.DependencyInjection": "9.0.4",
           "SpendWise.Data": "1.0.0"
         },
         "runtime": {
@@ -1067,6 +1092,20 @@
       "sha512": "sha512-QcZrCETsBJqy/vQpFtJc+jSXQ0K5sucQ6NUFbTNVHD4vfZZOwjZ/3sBzczkC4DityhD3AVO/+K/+9ioLs1AgRA==",
       "path": "microsoft.diasymreader/2.0.0",
       "hashPath": "microsoft.diasymreader.2.0.0.nupkg.sha512"
+    },
+    "Microsoft.Extensions.DependencyInjection/9.0.4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-f2MTUaS2EQ3lX4325ytPAISZqgBfXmY0WvgD80ji6Z20AoDNiCESxsqo6mFRwHJD/jfVKRw9FsW6+86gNre3ug==",
+      "path": "microsoft.extensions.dependencyinjection/9.0.4",
+      "hashPath": "microsoft.extensions.dependencyinjection.9.0.4.nupkg.sha512"
+    },
+    "Microsoft.Extensions.DependencyInjection.Abstractions/9.0.4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-UI0TQPVkS78bFdjkTodmkH0Fe8lXv9LnhGFKgKrsgUJ5a5FVdFRcgjIkBVLbGgdRhxWirxH/8IXUtEyYJx6GQg==",
+      "path": "microsoft.extensions.dependencyinjection.abstractions/9.0.4",
+      "hashPath": "microsoft.extensions.dependencyinjection.abstractions.9.0.4.nupkg.sha512"
     },
     "Microsoft.Extensions.DependencyModel/6.0.1": {
       "type": "package",
