@@ -44,10 +44,10 @@ class Program
                     ViewMonthlyReport();
                     break;
                 case "5":
-                    Console.WriteLine("\n✅ Exiting... Your data is saved. Have a great day! 🚀");
+                    Console.WriteLine("\n Exiting... Your data is saved. Have a great day! 🚀");
                     return;
                 default:
-                    Console.WriteLine("\n❌ Invalid option. Please try again.");
+                    Console.WriteLine("\n Invalid option. Please try again.");
                     Pause();
                     break;
             }
