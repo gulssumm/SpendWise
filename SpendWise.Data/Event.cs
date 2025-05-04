@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SpendWise.Data.Models
+namespace SpendWise.Data
 {
-    public class Event
+    public abstract class Event
     {
         public Guid UserId { get; set; }
         public string Description { get; set; } = "";

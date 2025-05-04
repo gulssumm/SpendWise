@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SpendWise.Data.Models
+namespace SpendWise.Data
 {
-    public class CatalogItem
+    public abstract class CatalogItem
     {
         public int Id { get; set; }
         public string Name { get; set; } // e.g., "Food", "Rent", "Utilities"

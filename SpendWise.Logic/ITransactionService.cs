@@ -1,4 +1,4 @@
-﻿using SpendWise.Data.Models;
+﻿using SpendWise.Data;
 using System.Collections.Generic;
 
 namespace SpendWise.Logic.Interfaces

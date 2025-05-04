@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using SpendWise.Data.Models;
 
-namespace SpendWise.Data.Interfaces
+namespace SpendWise.Data
 {
     // ✅ This is the missing interface
     public interface ITransactionRepository

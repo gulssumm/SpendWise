@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using SpendWise.Data.Interfaces;
-using SpendWise.Data.Models;
 
-namespace SpendWise.Data.Repositeries
+namespace SpendWise.Data
 {
     public class TransactionRepository : ITransactionRepository
     {

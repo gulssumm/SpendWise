@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Globalization;
 using SpendWise.Logic.Interfaces; // Import logic layer
-using SpendWise.Logic.Services;
-using SpendWise.Data.Repositeries;
-using SpendWise.Data.Interfaces;
-using SpendWise.Data.Models;
+using SpendWise.Data;
+using SpendWise.Logic;
 
 class Program
 {
@@ -72,11 +70,8 @@ class Program
         Console.Write("Select category (Food, Bills, Salary, Other): ");
         string categoryInput = Console.ReadLine();
         // Convert to CatalogItem
-        var category = new CatalogItem
-        {
-            Name = categoryInput,
-            Description = $"Auto-generated for {categoryInput}"
-        };
+        var category = new TransactionCategory(categoryInput, $"Auto-generated for {categoryInput}");
+
 
         Console.Write("Is it an expense? (yes/no): ");
         bool isExpense = Console.ReadLine()?.Trim().ToLower() == "yes";

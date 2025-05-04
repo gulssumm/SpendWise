@@ -3,10 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Collections.Generic;
 using System.Linq;
 using SpendWise.Logic;
-using SpendWise.Data.Interfaces;
-using SpendWise.Data.Models;
 using SpendWise.Logic.Interfaces;
-using SpendWise.Logic.Services;
+using SpendWise.Data;
 
 namespace TestProject1.Tests
 {
@@ -149,22 +147,18 @@ namespace TestProject1.Tests
 
         public static CatalogItem GenerateTestCatalogItem()
         {
-            return new CatalogItem
+            return new TransactionCategory("Test Category", "Sample category")
             {
-                Id = 1,
-                Name = "Test Category"
+                Id = 1
             };
         }
 
+
         public static Event GenerateTestEvent()
         {
-            return new Event
-            {
-                UserId = Guid.NewGuid(),
-                Description = "Test Event",
-                Timestamp = DateTime.Now
-            };
+            return new UserEvent(Guid.NewGuid(), "Test Event");
         }
+
 
 
         public static FinancialTransaction GenerateTransaction(

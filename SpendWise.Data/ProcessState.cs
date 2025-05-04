@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SpendWise.Data.Models
+namespace SpendWise.Data
 {
-    public class ProcessState
+    public abstract class ProcessState
     {
         public decimal CurrentBalance { get; set; }
         public decimal TotalIncome { get; set; }

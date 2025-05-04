@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using SpendWise.Data.Interfaces;
-using SpendWise.Data.Models;
+using SpendWise.Data;
 using SpendWise.Logic.Interfaces;
 
-namespace SpendWise.Logic.Services
+namespace SpendWise.Logic
 {
     public class TransactionService : ITransactionService
     {
@@ -19,12 +18,8 @@ namespace SpendWise.Logic.Services
         public void AddTransaction(string description, decimal amount, bool isExpense, CatalogItem category, User user)
         {
             var transaction = new FinancialTransaction(description, amount, isExpense, category.Name, DateTime.Now);
-            var transactionEvent = new Event
-            {
-                UserId = user.Id,
-                Description = $"User {user.Name} added transaction: {description}, Amount: {amount}, Category: {category.Name}",
-                Timestamp = DateTime.Now
-            };
+            var transactionEvent = new UserEvent(user.Id,
+                $"User {user.Name} added transaction: {description}, Amount: {amount}, Category: {category.Name}");
 
             transactionRepository.AddTransaction(transaction);
             transactionRepository.AddEvent(transactionEvent);
@@ -38,7 +33,7 @@ namespace SpendWise.Logic.Services
         public ProcessState GetProcessState()
         {
             var transactions = transactionRepository.GetTransactions();
-            var state = new ProcessState();
+            var state = new TransactionProcessState();
 
             foreach (var t in transactions)
             {
