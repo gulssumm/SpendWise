@@ -5,7 +5,7 @@ namespace SpendWise.Logic.Interfaces
 {
     public interface ITransactionService
     {
-        void AddTransaction(string description, decimal amount, bool isExpense, CatalogItem category, User user);
+        void AddTransaction(string description, decimal amount, bool isExpense, TransactionCategory category, User user);
         List<FinancialTransaction> GetTransactions();
         decimal GetBalance();
         ProcessState GetProcessState();

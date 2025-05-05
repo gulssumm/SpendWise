@@ -12,5 +12,11 @@ namespace SpendWise.Data
         {
             Transactions = new List<FinancialTransaction>();
         }
+
+        public decimal CalculateBalance()
+        {
+            return Transactions.Sum(t => t.IsExpense ? -t.Amount : t.Amount);
+        }
+
     }
 }

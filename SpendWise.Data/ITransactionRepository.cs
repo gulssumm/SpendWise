@@ -2,7 +2,6 @@
 
 namespace SpendWise.Data
 {
-    // ✅ This is the missing interface
     public interface ITransactionRepository
     {
         void AddTransaction(FinancialTransaction transaction);
@@ -11,7 +10,6 @@ namespace SpendWise.Data
         void AddEvent(Event e);
         List<Event> GetEvents();
 
-        // Optional if you're using them:
         void SaveTransactions(List<FinancialTransaction> transactions);
         List<FinancialTransaction> LoadTransactions();
     }
