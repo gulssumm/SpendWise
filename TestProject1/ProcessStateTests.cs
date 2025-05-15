@@ -29,8 +29,9 @@ namespace TestProject1
         {
             var state = new TransactionProcessState();
 
-            state.Transactions.Add(TestDataGenerator.GenerateTransaction("T1"));
-            state.Transactions.Add(TestDataGenerator.GenerateTransaction("T2"));
+            state.Transactions.Add(TestDataGenerator.GenerateTransaction("T1", 100.0m, true, "Misc", DateTime.Now));
+            state.Transactions.Add(TestDataGenerator.GenerateTransaction("T2", 150.0m, false, "Income", DateTime.Now));
+
 
             Assert.AreEqual(2, state.Transactions.Count);
         }
