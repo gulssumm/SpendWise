@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpendWise.Data", "SpendWise
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpendWise.Logic", "SpendWise.Logic\SpendWise.Logic.csproj", "{A3B9568B-948A-4CCA-A569-5CF04012DD43}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpendWise.Tests", "SpendWise.Tests\SpendWise.Tests.csproj", "{19025106-533E-4D13-AE13-E16C8FB983DA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{A3B9568B-948A-4CCA-A569-5CF04012DD43}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3B9568B-948A-4CCA-A569-5CF04012DD43}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3B9568B-948A-4CCA-A569-5CF04012DD43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19025106-533E-4D13-AE13-E16C8FB983DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19025106-533E-4D13-AE13-E16C8FB983DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19025106-533E-4D13-AE13-E16C8FB983DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19025106-533E-4D13-AE13-E16C8FB983DA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
