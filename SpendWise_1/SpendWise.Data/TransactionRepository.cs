@@ -1,0 +1,42 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace SpendWise.Data
+{
+    public class TransactionRepository : ITransactionRepository
+    {
+        private readonly List<FinancialTransaction> transactions = new List<FinancialTransaction>();
+        private readonly List<Event> events = new List<Event>();
+
+        public void AddTransaction(FinancialTransaction transaction)
+        {
+            transactions.Add(transaction);
+        }
+
+        public void SaveTransactions(List<FinancialTransaction> transactions)
+        {
+            this.transactions.Clear();
+            this.transactions.AddRange(transactions);
+        }
+
+        public List<FinancialTransaction> LoadTransactions()
+        {
+            return transactions;
+        }
+
+        public List<FinancialTransaction> GetTransactions()
+        {
+            return transactions;
+        }
+
+        public void AddEvent(Event e)
+        {
+            events.Add(e);
+        }
+
+        public List<Event> GetEvents()
+        {
+            return events;
+        }
+    }
+}
