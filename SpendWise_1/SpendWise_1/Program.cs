@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SpendWise.Logic;
 
 namespace SpendWise.Presentation
 {
@@ -11,7 +6,8 @@ namespace SpendWise.Presentation
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello SpendWise!");
+            // Entry point logic here
+            Console.WriteLine("SpendWise Application Started.");
         }
     }
 }
