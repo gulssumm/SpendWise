@@ -320,11 +320,14 @@ namespace SpendWise.Data
     partial void OnDateChanged();
     #endregion
 		
-		public FinancialTransaction()
+		public FinancialTransaction(string description, decimal amount, bool isExpense, string name, DateTime now)
 		{
 			this._TransactionCategory = default(EntityRef<TransactionCategory>);
 			OnCreated();
-		}
+            Description = description;
+            Amount = amount;
+            IsExpense = isExpense;
+        }
 		
 		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_Id", AutoSync=AutoSync.OnInsert, DbType="Int NOT NULL IDENTITY", IsPrimaryKey=true, IsDbGenerated=true)]
 		public int Id

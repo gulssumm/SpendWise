@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SpendWise.Data
+namespace SpendWise.Data.Models
 {
     public abstract class ProcessState
     {
@@ -9,6 +9,6 @@ namespace SpendWise.Data
         public decimal TotalIncome { get; set; }
         public decimal TotalExpenses { get; set; }
 
-        public List<FinancialTransaction> Transactions { get; set; } = new List<FinancialTransaction>();
+        public List<FinancialTransactionModel> Transactions { get; set; } = new List<FinancialTransactionModel>();
     }
 }

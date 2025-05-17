@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using SpendWise.Data;
+using SpendWise.Data.Models;
 using SpendWise.Logic.Interfaces;
 
 namespace SpendWise.Logic.Services
@@ -15,17 +16,17 @@ namespace SpendWise.Logic.Services
             _transactionRepository = transactionRepository;
         }
 
-        public void AddTransaction(string description, decimal amount, bool isExpense, TransactionCategory category, User user)
+        public void AddTransaction(string description, decimal amount, bool isExpense, TransactionCategoryModel category, UserModel user)
         {
-            var transaction = new FinancialTransaction(description, amount, isExpense, category.Name, DateTime.Now);
-            var transactionEvent = new UserEvent(user.Id,
+            var transaction = new FinancialTransactionModel(description, amount, isExpense, category.Name, DateTime.Now);
+            var transactionEvent = new UserEventModel(user.Id,
                 $"User {user.Name} added transaction: {description}, Amount: {amount}, Category: {category.Name}");
 
             _transactionRepository.AddTransaction(transaction);
             _transactionRepository.AddEvent(transactionEvent);
         }
 
-        public List<FinancialTransaction> GetTransactions()
+        public List<FinancialTransactionModel> GetTransactions()
         {
             return _transactionRepository.GetTransactions();
         }
@@ -64,7 +65,7 @@ namespace SpendWise.Logic.Services
             }
         }
 
-        public List<FinancialTransaction> GetMonthlyReport(int month, int year)
+        public List<FinancialTransactionModel> GetMonthlyReport(int month, int year)
         {
             return _transactionRepository
                 .GetTransactions()

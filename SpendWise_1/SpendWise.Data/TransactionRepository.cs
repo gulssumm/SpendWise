@@ -1,40 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SpendWise.Data
+namespace SpendWise.Data.Models
 {
     public class TransactionRepository : ITransactionRepository
     {
-        private readonly List<FinancialTransaction> transactions = new List<FinancialTransaction>();
-        private readonly List<Event> events = new List<Event>();
+        private readonly List<FinancialTransactionModel> transactions = new List<FinancialTransactionModel>();
+        private readonly List<EventModel> events = new List<EventModel>();
 
-        public void AddTransaction(FinancialTransaction transaction)
+        public void AddTransaction(FinancialTransactionModel transaction)
         {
             transactions.Add(transaction);
         }
 
-        public void SaveTransactions(List<FinancialTransaction> transactions)
+        public void SaveTransactions(List<FinancialTransactionModel> transactions)
         {
             this.transactions.Clear();
             this.transactions.AddRange(transactions);
         }
 
-        public List<FinancialTransaction> LoadTransactions()
+        public List<FinancialTransactionModel> LoadTransactions()
         {
             return transactions;
         }
 
-        public List<FinancialTransaction> GetTransactions()
+        public List<FinancialTransactionModel> GetTransactions()
         {
             return transactions;
         }
 
-        public void AddEvent(Event e)
+        public void AddEvent(EventModel e)
         {
             events.Add(e);
         }
 
-        public List<Event> GetEvents()
+        public List<EventModel> GetEvents()
         {
             return events;
         }

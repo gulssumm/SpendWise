@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace SpendWise.Data
+namespace SpendWise.Data.Models
 {
-    public class TransactionCategory : CatalogItem
+    public class TransactionCategoryModel : CatalogItem
     {
-        public TransactionCategory(string name, string description)
+        public TransactionCategoryModel(string name, string description)
         {
             Name = name;
             Description = description;

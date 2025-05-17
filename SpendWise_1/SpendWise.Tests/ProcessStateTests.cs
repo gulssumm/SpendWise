@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SpendWise.Data;    // Adjust namespace to where your domain classes are
+using SpendWise.Data;
+using SpendWise.Data.Models;
 using System;
 
 namespace TestProject1
@@ -13,8 +14,8 @@ namespace TestProject1
             // Arrange
             var state = new TransactionProcessState();
 
-            var t1 = new FinancialTransaction("Groceries", 50.0m, true, "Food", DateTime.Now);
-            var t2 = new FinancialTransaction("Freelance", 200.0m, false, "Work", DateTime.Now);
+            var t1 = TestDataGenerator.GenerateTransactionModel("Groceries", 50.0m, true, "Food", DateTime.Now);
+            var t2 = TestDataGenerator.GenerateTransactionModel("Freelance", 200.0m, false, "Work", DateTime.Now);
 
             // Act
             state.Transactions.Add(t1);
@@ -33,8 +34,8 @@ namespace TestProject1
             // Arrange
             var state = new TransactionProcessState();
 
-            var t1 = TestDataGenerator.GenerateTransaction("T1", 100.0m, true, "Misc", DateTime.Now);
-            var t2 = TestDataGenerator.GenerateTransaction("T2", 150.0m, false, "Income", DateTime.Now);
+            var t1 = TestDataGenerator.GenerateTransactionModel("T1", 100.0m, true, "Misc", DateTime.Now);
+            var t2 = TestDataGenerator.GenerateTransactionModel("T2", 150.0m, false, "Income", DateTime.Now);
 
             // Act
             state.Transactions.Add(t1);

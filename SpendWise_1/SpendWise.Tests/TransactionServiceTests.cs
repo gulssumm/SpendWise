@@ -2,8 +2,10 @@
 using SpendWise.Logic;
 using SpendWise.Logic.Interfaces;
 using SpendWise.Data;
+using SpendWise.Data.Models;
 using SpendWise.Logic.Services;
 using System.Collections.Generic;
+using System;
 
 [TestClass]
 public class TransactionServiceTests
@@ -20,8 +22,8 @@ public class TransactionServiceTests
     [TestMethod]
     public void AddTransaction_ShouldStoreCorrectly()
     {
-        var user = TestDataGenerator.GenerateTestUser();
-        var category = TestDataGenerator.GenerateTestTransactionCategory();
+        var user = TestDataGenerator.GenerateTestUserModel();
+        var category = TestDataGenerator.GenerateTestTransactionCategoryModel();
 
         _transactionService.AddTransaction("Groceries", 50.0m, true, category, user);
 
@@ -33,8 +35,8 @@ public class TransactionServiceTests
     [TestMethod]
     public void GetBalance_ShouldReturnCorrectAmount()
     {
-        var user = TestDataGenerator.GenerateTestUser();
-        var category = TestDataGenerator.GenerateTestTransactionCategory();
+        var user = TestDataGenerator.GenerateTestUserModel();
+        var category = TestDataGenerator.GenerateTestTransactionCategoryModel();
 
         _transactionService.AddTransaction("Salary", 1000.0m, false, category, user);
         _transactionService.AddTransaction("Rent", 400.0m, true, category, user);
@@ -46,38 +48,38 @@ public class TransactionServiceTests
     // In-memory repository implementation for testing
     private class InMemoryTransactionRepositoryForTest : ITransactionRepository
     {
-        private readonly List<FinancialTransaction> _transactions = new List<FinancialTransaction>();
-        private readonly List<Event> _events = new List<Event>();
+        private readonly List<FinancialTransactionModel> _transactions = new List<FinancialTransactionModel>();
+        private readonly List<EventModel> _events = new List<EventModel>();
 
-        public void AddTransaction(FinancialTransaction transaction)
+        public void AddTransaction(FinancialTransactionModel transaction)
         {
             _transactions.Add(transaction);
         }
 
-        public List<FinancialTransaction> GetTransactions()
+        public List<FinancialTransactionModel> GetTransactions()
         {
-            return new List<FinancialTransaction>(_transactions);
+            return new List<FinancialTransactionModel>(_transactions);
         }
 
-        public void AddEvent(Event e)
+        public void AddEvent(EventModel e)
         {
             _events.Add(e);
         }
 
-        public List<Event> GetEvents()
+        public List<EventModel> GetEvents()
         {
-            return new List<Event>(_events);
+            return new List<EventModel>(_events);
         }
 
-        public void SaveTransactions(List<FinancialTransaction> transactions)
+        public void SaveTransactions(List<FinancialTransactionModel> transactions)
         {
             _transactions.Clear();
             _transactions.AddRange(transactions);
         }
 
-        public List<FinancialTransaction> LoadTransactions()
+        public List<FinancialTransactionModel> LoadTransactions()
         {
-            return new List<FinancialTransaction>(_transactions);
+            return new List<FinancialTransactionModel>(_transactions);
         }
     }
 }

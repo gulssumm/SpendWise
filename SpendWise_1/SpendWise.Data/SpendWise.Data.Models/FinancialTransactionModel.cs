@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SpendWise.Data
+namespace SpendWise.Data.Models
 {
-    public class FinancialTransaction
+    public class FinancialTransactionModel
     {
         public string Description { get; set; }
         public decimal Amount { get; set; }
@@ -14,7 +14,7 @@ namespace SpendWise.Data
         public string Category { get; set; }
         public DateTime Date { get; set; }
 
-        public FinancialTransaction(string description, decimal amount, bool isExpense, string category, DateTime date)
+        public FinancialTransactionModel(string description, decimal amount, bool isExpense, string category, DateTime date)
         {
             Description = description;
             Amount = amount;

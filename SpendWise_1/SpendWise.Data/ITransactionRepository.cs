@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
 
-namespace SpendWise.Data
+namespace SpendWise.Data.Models
 {
     public interface ITransactionRepository
     {
-        void AddTransaction(FinancialTransaction transaction);
-        List<FinancialTransaction> GetTransactions();
+        void AddTransaction(FinancialTransactionModel transaction);
+        List<FinancialTransactionModel> GetTransactions();
 
-        void AddEvent(Event e);
-        List<Event> GetEvents();
+        void AddEvent(EventModel e);
+        List<EventModel> GetEvents();
 
-        void SaveTransactions(List<FinancialTransaction> transactions);
-        List<FinancialTransaction> LoadTransactions();
+        void SaveTransactions(List<FinancialTransactionModel> transactions);
+        List<FinancialTransactionModel> LoadTransactions();
     }
 
 

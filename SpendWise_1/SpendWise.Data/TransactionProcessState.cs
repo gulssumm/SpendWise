@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SpendWise.Data
+namespace SpendWise.Data.Models
 {
     public class TransactionProcessState : ProcessState
     {
         public TransactionProcessState()
         {
-            Transactions = new List<FinancialTransaction>();
+            Transactions = new List<FinancialTransactionModel>();
         }
 
         public decimal CalculateBalance()

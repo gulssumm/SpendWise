@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SpendWise.Data;
+using SpendWise.Data.Models;
 using System;
 using System.Collections.Generic;
 
@@ -10,17 +11,17 @@ public class TransactionRepositoryTests
     public void AddTransaction_ShouldStoreInMemory()
     {
         // Arrange
-        var repo = new TransactionRepository();  // Using the actual repository class
-        var transaction = TestDataGenerator.GenerateTransaction("Book", 20.0m, true, "Education");
+        var repo = new TransactionRepository();  // Make sure this uses SpendWise.Data.Models.TransactionRepository
+        var transaction = TestDataGenerator.GenerateTransactionModel("Book", 20.0m, true, "Education");
 
         // Act
         repo.AddTransaction(transaction);
         var stored = repo.GetTransactions();
 
         // Assert
-        Assert.AreEqual(1, stored.Count);  // Ensure one transaction is stored
-        Assert.AreEqual("Book", stored[0].Description);  // Ensure transaction description matches
-        Assert.AreEqual(20.0m, stored[0].Amount);  // Ensure transaction amount matches
+        Assert.AreEqual(1, stored.Count);
+        Assert.AreEqual("Book", stored[0].Description);
+        Assert.AreEqual(20.0m, stored[0].Amount);
     }
 
     [TestMethod]
@@ -28,15 +29,15 @@ public class TransactionRepositoryTests
     {
         // Arrange
         var repo = new TransactionRepository();
-        var e = TestDataGenerator.GenerateTestEvent();  // Assuming this creates an Event object
+        var e = TestDataGenerator.GenerateTestEventModel();
 
         // Act
         repo.AddEvent(e);
         var storedEvents = repo.GetEvents();
 
         // Assert
-        Assert.AreEqual(1, storedEvents.Count);  // Ensure one event is stored
-        Assert.AreEqual("Test Event", storedEvents[0].Description);  // Ensure event description matches
+        Assert.AreEqual(1, storedEvents.Count);
+        Assert.AreEqual("Test Event", storedEvents[0].Description);
     }
 
     [TestMethod]
@@ -44,23 +45,23 @@ public class TransactionRepositoryTests
     {
         // Arrange
         var repo = new TransactionRepository();
-        var transaction1 = TestDataGenerator.GenerateTransaction("Book", 20.0m, true, "Education");
-        var transaction2 = TestDataGenerator.GenerateTransaction("Laptop", 1000.0m, true, "Electronics");
+        var transaction1 = TestDataGenerator.GenerateTransactionModel("Book", 20.0m, true, "Education");
+        var transaction2 = TestDataGenerator.GenerateTransactionModel("Laptop", 1000.0m, true, "Electronics");
         repo.AddTransaction(transaction1);
         repo.AddTransaction(transaction2);
 
         // Act
-        var newTransactions = new List<FinancialTransaction>
+        var newTransactions = new List<FinancialTransactionModel>
         {
-            TestDataGenerator.GenerateTransaction("Phone", 500.0m, true, "Electronics")
+            TestDataGenerator.GenerateTransactionModel("Phone", 500.0m, true, "Electronics")
         };
-        repo.SaveTransactions(newTransactions);  // This should clear and add the new transactions
+        repo.SaveTransactions(newTransactions);
 
         var stored = repo.GetTransactions();
 
         // Assert
-        Assert.AreEqual(1, stored.Count);  // Only one transaction should be stored
-        Assert.AreEqual("Phone", stored[0].Description);  // Ensure that only the "Phone" transaction remains
+        Assert.AreEqual(1, stored.Count);
+        Assert.AreEqual("Phone", stored[0].Description);
     }
 
     [TestMethod]
@@ -68,8 +69,8 @@ public class TransactionRepositoryTests
     {
         // Arrange
         var repo = new TransactionRepository();
-        var transaction1 = TestDataGenerator.GenerateTransaction("Book", 20.0m, true, "Education");
-        var transaction2 = TestDataGenerator.GenerateTransaction("Laptop", 1000.0m, true, "Electronics");
+        var transaction1 = TestDataGenerator.GenerateTransactionModel("Book", 20.0m, true, "Education");
+        var transaction2 = TestDataGenerator.GenerateTransactionModel("Laptop", 1000.0m, true, "Electronics");
         repo.AddTransaction(transaction1);
         repo.AddTransaction(transaction2);
 
@@ -77,8 +78,8 @@ public class TransactionRepositoryTests
         var stored = repo.LoadTransactions();
 
         // Assert
-        Assert.AreEqual(2, stored.Count);  // Ensure both transactions are loaded
-        Assert.AreEqual("Book", stored[0].Description);  // Ensure the description of the first transaction matches
-        Assert.AreEqual("Laptop", stored[1].Description);  // Ensure the description of the second transaction matches
+        Assert.AreEqual(2, stored.Count);
+        Assert.AreEqual("Book", stored[0].Description);
+        Assert.AreEqual("Laptop", stored[1].Description);
     }
 }

@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SpendWise.Data
+namespace SpendWise.Data.Models
 {
-    public class UserEvent : Event
+    public class UserEventModel : EventModel
     {
         public Guid UserId { get; set; }
 
-        public UserEvent(Guid userId, string description)
+        public UserEventModel(Guid userId, string description)
         {
             UserId = userId;
             Description = description;

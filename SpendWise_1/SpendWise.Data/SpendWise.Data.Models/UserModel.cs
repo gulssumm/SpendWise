@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SpendWise.Data
+namespace SpendWise.Data.Models
 {
-    public class User
+    public class UserModel
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = "";
