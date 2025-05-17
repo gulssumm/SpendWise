@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?><Database Name="SpendWiseDB" Class="MyDataModelDataContext" xmlns="http://schemas.microsoft.com/linqtosql/dbml/2007">
+  <Connection Mode="AppSettings" ConnectionString="Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=SpendWiseDB;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False" SettingsObjectName="SpendWise.Data.Properties.Settings" SettingsPropertyName="SpendWiseDBConnectionString" Provider="System.Data.SqlClient" />
+  <Table Name="dbo.Events" Member="Events">
+    <Type Name="Event">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="UserId" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="Timestamp" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Association Name="User_Event" Member="User" ThisKey="UserId" OtherKey="Id" Type="User" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.FinancialTransactions" Member="FinancialTransactions">
+    <Type Name="FinancialTransaction">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(255) NOT NULL" CanBeNull="false" />
+      <Column Name="Amount" Type="System.Decimal" DbType="Decimal(18,2) NOT NULL" CanBeNull="false" />
+      <Column Name="IsExpense" Type="System.Boolean" DbType="Bit NOT NULL" CanBeNull="false" />
+      <Column Name="CategoryId" Type="System.Int32" DbType="Int NOT NULL" CanBeNull="false" />
+      <Column Name="Date" Type="System.DateTime" DbType="DateTime NOT NULL" CanBeNull="false" />
+      <Association Name="TransactionCategory_FinancialTransaction" Member="TransactionCategory" ThisKey="CategoryId" OtherKey="Id" Type="TransactionCategory" IsForeignKey="true" />
+    </Type>
+  </Table>
+  <Table Name="dbo.TransactionCategories" Member="TransactionCategories">
+    <Type Name="TransactionCategory">
+      <Column Name="Id" Type="System.Int32" DbType="Int NOT NULL IDENTITY" IsPrimaryKey="true" IsDbGenerated="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Column Name="Description" Type="System.String" DbType="NVarChar(255)" CanBeNull="true" />
+      <Association Name="TransactionCategory_FinancialTransaction" Member="FinancialTransactions" ThisKey="Id" OtherKey="CategoryId" Type="FinancialTransaction" />
+    </Type>
+  </Table>
+  <Table Name="dbo.Users" Member="Users">
+    <Type Name="User">
+      <Column Name="Id" Type="System.Guid" DbType="UniqueIdentifier NOT NULL" IsPrimaryKey="true" CanBeNull="false" />
+      <Column Name="Name" Type="System.String" DbType="NVarChar(100) NOT NULL" CanBeNull="false" />
+      <Association Name="User_Event" Member="Events" ThisKey="Id" OtherKey="UserId" Type="Event" />
+    </Type>
+  </Table>
+</Database>
