@@ -113,6 +113,9 @@
     <Compile Include="TestDataGenerator.cs" />
     <Compile Include="TransactionRepositoryTests.cs" />
     <Compile Include="TransactionServiceTests.cs" />
+    <Compile Include="ViewModelTests\MainViewModelTests.cs" />
+    <Compile Include="ViewModelTests\TransactionDetailViewModelTests.cs" />
+    <Compile Include="ViewModelTests\TransactionListViewModelTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
