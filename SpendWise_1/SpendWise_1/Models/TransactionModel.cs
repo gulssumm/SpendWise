@@ -21,7 +21,7 @@ namespace SpendWise.Presentation.Models
         /// <summary>
         /// Gets all transactions from the system
         /// </summary>
-        public List<FinancialTransactionModel> GetAllTransactions()
+        public virtual List<FinancialTransactionModel> GetAllTransactions()
         {
             return _transactionService.GetTransactions();
         }
@@ -29,7 +29,7 @@ namespace SpendWise.Presentation.Models
         /// <summary>
         /// Gets the current balance (income - expenses)
         /// </summary>
-        public decimal GetBalance()
+        public virtual decimal GetBalance()
         {
             return _transactionService.GetBalance();
         }
@@ -37,7 +37,7 @@ namespace SpendWise.Presentation.Models
         /// <summary>
         /// Adds a new transaction to the system
         /// </summary>
-        public void AddTransaction(string description, decimal amount, bool isExpense,
+        public virtual void AddTransaction(string description, decimal amount, bool isExpense,
                                   TransactionCategoryModel category, UserModel user)
         {
             _transactionService.AddTransaction(description, amount, isExpense, category, user);
@@ -62,7 +62,7 @@ namespace SpendWise.Presentation.Models
         /// <summary>
         /// Saves all transactions to persistent storage
         /// </summary>
-        public void SaveTransactions()
+        public virtual void SaveTransactions()
         {
             _transactionService.SaveTransactions();
         }
@@ -70,7 +70,7 @@ namespace SpendWise.Presentation.Models
         /// <summary>
         /// Loads transactions from persistent storage
         /// </summary>
-        public void LoadTransactions()
+        public virtual void LoadTransactions()
         {
             _transactionService.LoadTransactions();
         }

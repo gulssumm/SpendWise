@@ -42,7 +42,7 @@ namespace SpendWise.Presentation.ViewModels
         /// <summary>
         /// Called when a transaction is selected in the list
         /// </summary>
-        public void TransactionSelected(FinancialTransactionModel transaction)
+        public virtual void TransactionSelected(FinancialTransactionModel transaction)
         {
             DetailViewModel = new TransactionDetailViewModel(_transactionModel, this, transaction);
         }
@@ -50,7 +50,7 @@ namespace SpendWise.Presentation.ViewModels
         /// <summary>
         /// Called to create a new transaction
         /// </summary>
-        public void CreateNewTransaction()
+        public virtual void CreateNewTransaction()
         {
             DetailViewModel = new TransactionDetailViewModel(_transactionModel, this);
         }
@@ -58,7 +58,7 @@ namespace SpendWise.Presentation.ViewModels
         /// <summary>
         /// Refreshes the transaction list data
         /// </summary>
-        public void RefreshTransactions()
+        public virtual void RefreshTransactions()
         {
             TransactionListViewModel.LoadTransactions();
         }
@@ -66,7 +66,7 @@ namespace SpendWise.Presentation.ViewModels
         /// <summary>
         /// Clears the currently selected transaction
         /// </summary>
-        public void ClearTransactionSelection()
+        public virtual void ClearTransactionSelection()
         {
             DetailViewModel = null;
             TransactionListViewModel.ClearSelection();
