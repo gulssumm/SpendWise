@@ -53,8 +53,9 @@
                     </StackPanel>
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
                         <Button Content="Add Transaction" 
-                                Command="{Binding TransactionListViewModel.AddNewTransactionCommand}"
-                                Padding="10,5" Margin="0,0,10,0" Background="#3498db" Foreground="White" BorderBrush="#2980b9"/>
+        Command="{Binding TransactionListViewModel.AddNewTransactionCommand}"
+        Padding="10,5" Margin="0,0,10,0" Background="#3498db" Foreground="White" BorderBrush="#2980b9"
+        ToolTip="Create a new transaction record"/>
                         <Button Content="Refresh" 
                                 Command="{Binding TransactionListViewModel.RefreshCommand}"
                                 Padding="10,5" Background="#95a5a6" Foreground="White" BorderBrush="#7f8c8d"/>
