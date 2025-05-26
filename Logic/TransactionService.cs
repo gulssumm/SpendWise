@@ -16,6 +16,18 @@ namespace Logic
 
         public void AddTransaction(string description, decimal amount, bool isExpense, TransactionCategory category, User user)
         {
+            if (string.IsNullOrWhiteSpace(description))
+                throw new ArgumentException("Description cannot be empty.", nameof(description));
+
+            if (category == null)
+                throw new ArgumentNullException(nameof(category), "Category cannot be null.");
+
+            if (user == null)
+                throw new ArgumentNullException(nameof(user), "User cannot be null.");
+
+            if (amount <= 0)
+                throw new ArgumentOutOfRangeException(nameof(amount), "Amount must be greater than zero.");
+
             var transaction = new FinancialTransaction(description, amount, isExpense, category.Name, DateTime.Now);
             var transactionEvent = new UserEvent(user.Id,
                 $"User {user.Name} added transaction: {description}, Amount: {amount}, Category: {category.Name}");
@@ -23,6 +35,7 @@ namespace Logic
             _transactionRepository.AddTransaction(transaction);
             _transactionRepository.AddEvent(transactionEvent);
         }
+
 
         public List<FinancialTransaction> GetTransactions()
         {
