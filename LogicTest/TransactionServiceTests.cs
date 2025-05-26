@@ -1,35 +1,52 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
-using Data;   // Adjust namespace if needed
-using Logic;  // Adjust namespace if needed
+using Logic;  // Your logic layer namespace
+using Data;   // Your data layer namespace
 
 namespace LogicTests
 {
-    // A simple fake repository to use in tests
-    internal class FakeTransactionRepository : ITransactionRepository
-    {
-        private readonly List<FinancialTransaction> _transactions = new();
-
-        public void AddTransaction(FinancialTransaction transaction)
-        {
-            _transactions.Add(transaction);
-        }
-
-        public List<FinancialTransaction> GetTransactions()
-        {
-            return new List<FinancialTransaction>(_transactions);
-        }
-
-        public void AddEvent(Event e) => throw new NotImplementedException();
-        public List<Event> GetEvents() => throw new NotImplementedException();
-        public void SaveTransactions(List<FinancialTransaction> transactions) => throw new NotImplementedException();
-        public List<FinancialTransaction> LoadTransactions() => throw new NotImplementedException();
-    }
-
     [TestClass]
     public class TransactionServiceTests
     {
+        // A simple fake repository implementing ITransactionRepository
+        private class FakeTransactionRepository : ITransactionRepository
+        {
+            private readonly List<FinancialTransaction> _transactions = new();
+            private readonly List<Event> _events = new();
+
+            public void AddTransaction(FinancialTransaction transaction)
+            {
+                _transactions.Add(transaction);
+            }
+
+            public List<FinancialTransaction> GetTransactions()
+            {
+                return new List<FinancialTransaction>(_transactions);
+            }
+
+            public void AddEvent(Event e)
+            {
+                // Just store events, no exception
+                _events.Add(e);
+            }
+
+            public List<Event> GetEvents()
+            {
+                return new List<Event>(_events);
+            }
+
+            public void SaveTransactions(List<FinancialTransaction> transactions)
+            {
+                // For test, do nothing
+            }
+
+            public List<FinancialTransaction> LoadTransactions()
+            {
+                return new List<FinancialTransaction>(_transactions);
+            }
+        }
+
         [TestMethod]
         public void AddTransaction_ShouldAddTransactionCorrectly()
         {
