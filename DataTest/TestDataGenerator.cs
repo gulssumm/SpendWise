@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Data;
 
 namespace DataTest
 {
-    public class TestDataGenerator
+    public static class TestDataGenerator
     {
         public static User GenerateTestUser()
         {
@@ -44,20 +43,6 @@ namespace DataTest
                 ));
             }
             return list;
-        }
-
-        [TestMethod]
-        public void AddTransaction_ShouldUpdateTransactionCount_UsingInlineCreation()
-        {
-            var state = new TransactionProcessState();
-
-            var t1 = new FinancialTransaction("Inline T1", 100.0m, true, "Misc", DateTime.Now);
-            var t2 = new FinancialTransaction("Inline T2", 150.0m, false, "Income", DateTime.Now);
-
-            state.Transactions.Add(t1);
-            state.Transactions.Add(t2);
-
-            Assert.AreEqual(2, state.Transactions.Count);
         }
 
     }
