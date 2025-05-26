@@ -1,8 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using Logic;  // Your logic layer namespace
-using Data;   // Your data layer namespace
+﻿using Logic;  
+using Data;  
 
 namespace LogicTests
 {
