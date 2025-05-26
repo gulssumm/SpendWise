@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using SpendWise.Data;
-using SpendWise.Logic.Interfaces;
+using Data;
 
-namespace SpendWise.Logic.Services
+namespace Logic
 {
     public class TransactionService : ITransactionService
     {
@@ -14,6 +13,9 @@ namespace SpendWise.Logic.Services
         {
             _transactionRepository = transactionRepository;
         }
+
+        // This property only if necessary for testing
+        public ITransactionRepository TransactionRepository => _transactionRepository;
 
         public void AddTransaction(string description, decimal amount, bool isExpense, TransactionCategory category, User user)
         {

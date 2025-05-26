@@ -9,6 +9,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\SpendWise.Data\SpendWise.Data.csproj" />
+		<ProjectReference Include="..\Data\Data.csproj" />
 	</ItemGroup>
 </Project>

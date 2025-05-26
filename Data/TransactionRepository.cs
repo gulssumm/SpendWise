@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SpendWise.Data
+namespace Data
 {
     public class TransactionRepository : ITransactionRepository
     {

@@ -1,7 +1,7 @@
-﻿using SpendWise.Data;
+﻿using Data;
 using System.Collections.Generic;
 
-namespace SpendWise.Logic.Interfaces
+namespace Logic
 {
     public interface ITransactionService
     {

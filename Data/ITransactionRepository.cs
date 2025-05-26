@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace SpendWise.Data
+namespace Data
 {
     public interface ITransactionRepository
     {
@@ -14,5 +14,5 @@ namespace SpendWise.Data
         List<FinancialTransaction> LoadTransactions();
     }
 
-    
+
 }

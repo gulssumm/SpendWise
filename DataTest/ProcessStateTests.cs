@@ -1,9 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SpendWise.Data;
+using Data;
 using System;
-using System.Linq;
 
-namespace TestProject1
+namespace DataTest
 {
     [TestClass]
     public class ProcessStateTests
@@ -31,7 +30,6 @@ namespace TestProject1
 
             state.Transactions.Add(TestDataGenerator.GenerateTransaction("T1", 100.0m, true, "Misc", DateTime.Now));
             state.Transactions.Add(TestDataGenerator.GenerateTransaction("T2", 150.0m, false, "Income", DateTime.Now));
-
 
             Assert.AreEqual(2, state.Transactions.Count);
         }
