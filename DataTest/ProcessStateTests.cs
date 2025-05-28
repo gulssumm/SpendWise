@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Data;
+using Logic;
 using System;
 
 namespace DataTest
@@ -10,10 +11,10 @@ namespace DataTest
         [TestMethod]
         public void AddTransaction_ShouldAffectProcessStateBalance()
         {
-            var state = new TransactionProcessState();
+            var state = new ConcreteTransactionProcessState();
 
-            var t1 = new FinancialTransaction("Groceries", 50.0m, true, "Food", DateTime.Now);
-            var t2 = new FinancialTransaction("Freelance", 200.0m, false, "Work", DateTime.Now);
+            var t1 = new ConcreteFinancialTransaction("Groceries", 50.0m, true, "Food", DateTime.Now);
+            var t2 = new ConcreteFinancialTransaction("Freelance", 200.0m, false, "Work", DateTime.Now);
 
             state.Transactions.Add(t1);
             state.Transactions.Add(t2);
@@ -26,7 +27,7 @@ namespace DataTest
         [TestMethod]
         public void AddTransaction_ShouldUpdateTransactionCount()
         {
-            var state = new TransactionProcessState();
+            var state = new ConcreteTransactionProcessState();
 
             state.Transactions.Add(TestDataGenerator.GenerateTransaction("T1", 100.0m, true, "Misc", DateTime.Now));
             state.Transactions.Add(TestDataGenerator.GenerateTransaction("T2", 150.0m, false, "Income", DateTime.Now));
@@ -37,7 +38,7 @@ namespace DataTest
         [TestMethod]
         public void EmptyProcessState_ShouldHaveZeroBalance()
         {
-            var state = new TransactionProcessState();
+            var state = new ConcreteTransactionProcessState();
 
             var balance = state.CalculateBalance();
 
@@ -47,10 +48,10 @@ namespace DataTest
         [TestMethod]
         public void AddTransaction_ShouldUpdateTransactionCount_UsingInlineCreation()
         {
-            var state = new TransactionProcessState();
+            var state = new ConcreteTransactionProcessState();
 
-            var t1 = new FinancialTransaction("Inline T1", 100.0m, true, "Misc", DateTime.Now);
-            var t2 = new FinancialTransaction("Inline T2", 150.0m, false, "Income", DateTime.Now);
+            var t1 = new ConcreteFinancialTransaction("Inline T1", 100.0m, true, "Misc", DateTime.Now);
+            var t2 = new ConcreteFinancialTransaction("Inline T2", 150.0m, false, "Income", DateTime.Now);
 
             state.Transactions.Add(t1);
             state.Transactions.Add(t2);

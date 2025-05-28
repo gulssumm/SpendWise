@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Data
 {
-    public class FinancialTransaction
+    public abstract class FinancialTransaction
     {
         public string Description { get; set; }
         public decimal Amount { get; set; }

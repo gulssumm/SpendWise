@@ -1,36 +1,33 @@
-﻿using Data;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Logic;
 
 namespace LogicTest
 {
     public static class TestDataGenerator
     {
-        public static User GenerateTestUser()
+        public static ConcreteUser GenerateTestUser()
         {
-            return new User
-            {
-                Id = Guid.NewGuid(),
-                Name = "Test User"
-            };
+            return new ConcreteUser(Guid.NewGuid(), "Test User");
         }
 
-        public static TransactionCategory GenerateTestTransactionCategory()
+        public static ConcreteTransactionCategory GenerateTestTransactionCategory()
         {
-            return new TransactionCategory("Test Category", "Sample category");
+            return new ConcreteTransactionCategory("Test Category", "Sample category");
         }
 
-        public static FinancialTransaction GenerateTransaction(string description, decimal amount, bool isExpense, string category, DateTime? date = null)
+        public static ConcreteFinancialTransaction GenerateTransaction(string description, decimal amount, bool isExpense, string category, DateTime? date = null)
         {
-            return new FinancialTransaction(description, amount, isExpense, category, date ?? DateTime.Now);
+            return new ConcreteFinancialTransaction(description, amount, isExpense, category, date ?? DateTime.Now);
         }
 
-        public static Event GenerateTestEvent()
+        public static ConcreteUserEvent GenerateTestEvent()
         {
-            return new UserEvent(Guid.NewGuid(), "Test Event");
+            return new ConcreteUserEvent(Guid.NewGuid(), "Test Event");
         }
 
-        public static List<FinancialTransaction> GenerateMultipleTransactions(int count)
+        public static List<ConcreteFinancialTransaction> GenerateMultipleTransactions(int count)
         {
-            var list = new List<FinancialTransaction>();
+            var list = new List<ConcreteFinancialTransaction>();
             for (int i = 0; i < count; i++)
             {
                 list.Add(GenerateTransaction(

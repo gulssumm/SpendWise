@@ -1,7 +1,8 @@
-﻿using Logic;  
-using Data;  
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Logic;
+using Data;
 
-namespace LogicTests
+namespace LogicTest
 {
     [TestClass]
     public class TransactionServiceTests
@@ -51,8 +52,8 @@ namespace LogicTests
             var repo = new FakeTransactionRepository();
             var service = new TransactionService(repo);
 
-            var user = new User { Id = Guid.NewGuid(), Name = "Test User" };
-            var category = new TransactionCategory("Food", "Food category");
+            var user = new ConcreteUser { Id = Guid.NewGuid(), Name = "Test User" };
+            var category = new ConcreteTransactionCategory("Food", "Food category");
 
             // Act
             service.AddTransaction(

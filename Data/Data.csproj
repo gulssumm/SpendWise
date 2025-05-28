@@ -7,7 +7,4 @@
 	<ItemGroup>
 	  <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.4" />
 	</ItemGroup>
-	<ItemGroup>
-	  <Service Include="{3259aa49-8aa1-44d3-9025-a0b520596a8c}" />
-	</ItemGroup>
 </Project>

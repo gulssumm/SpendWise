@@ -6,17 +6,11 @@ using System.Threading.Tasks;
 
 namespace Data
 {
-    public class TransactionProcessState : ProcessState
+    public abstract class TransactionProcessState : ProcessState
     {
-        public TransactionProcessState()
-        {
-            Transactions = new List<FinancialTransaction>();
-        }
+        public abstract IList<FinancialTransaction> Transactions { get; }
 
-        public decimal CalculateBalance()
-        {
-            return Transactions.Sum(t => t.IsExpense ? -t.Amount : t.Amount);
-        }
-
+        public abstract decimal CalculateBalance();
     }
 }
+

@@ -28,8 +28,8 @@ namespace Logic
             if (amount <= 0)
                 throw new ArgumentOutOfRangeException(nameof(amount), "Amount must be greater than zero.");
 
-            var transaction = new FinancialTransaction(description, amount, isExpense, category.Name, DateTime.Now);
-            var transactionEvent = new UserEvent(user.Id,
+            var transaction = new ConcreteFinancialTransaction(description, amount, isExpense, category.Name, DateTime.Now);
+            var transactionEvent = new ConcreteUserEvent(user.Id,
                 $"User {user.Name} added transaction: {description}, Amount: {amount}, Category: {category.Name}");
 
             _transactionRepository.AddTransaction(transaction);
@@ -45,7 +45,7 @@ namespace Logic
         public ProcessState GetProcessState()
         {
             var transactions = _transactionRepository.GetTransactions();
-            var state = new TransactionProcessState();
+            var state = new ConcreteTransactionProcessState();
 
             foreach (var t in transactions)
             {
@@ -53,13 +53,16 @@ namespace Logic
                     state.TotalExpenses += t.Amount;
                 else
                     state.TotalIncome += t.Amount;
+
+                // Add each transaction to the Transactions collection (read-only property)
+                state.Transactions.Add(t);
             }
 
             state.CurrentBalance = state.TotalIncome - state.TotalExpenses;
-            state.Transactions = transactions;
 
             return state;
         }
+
 
         public void SaveTransactions()
         {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Data;
+using Logic;
 
 namespace DataTest
 {
@@ -7,7 +8,7 @@ namespace DataTest
     {
         public static User GenerateTestUser()
         {
-            return new User
+            return new ConcreteUser
             {
                 Id = Guid.NewGuid(),
                 Name = "Test User"
@@ -16,17 +17,17 @@ namespace DataTest
 
         public static TransactionCategory GenerateTestTransactionCategory()
         {
-            return new TransactionCategory("Test Category", "Sample category");
+            return new ConcreteTransactionCategory("Test Category", "Sample category");
         }
 
         public static FinancialTransaction GenerateTransaction(string description, decimal amount, bool isExpense, string category, DateTime? date = null)
         {
-            return new FinancialTransaction(description, amount, isExpense, category, date ?? DateTime.Now);
+            return new ConcreteFinancialTransaction(description, amount, isExpense, category, date ?? DateTime.Now);
         }
 
         public static Event GenerateTestEvent()
         {
-            return new UserEvent(Guid.NewGuid(), "Test Event");
+            return new ConcreteUserEvent(Guid.NewGuid(), "Test Event");
         }
 
         public static List<FinancialTransaction> GenerateMultipleTransactions(int count)
