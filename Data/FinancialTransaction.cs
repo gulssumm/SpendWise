@@ -8,6 +8,7 @@ namespace Data
 {
     public abstract class FinancialTransaction
     {
+        public int Id { get; set; } // Primary key for database
         public string Description { get; set; }
         public decimal Amount { get; set; }
         public bool IsExpense { get; set; }
@@ -22,6 +23,13 @@ namespace Data
             Category = category;
             Date = date;
         }
+
+        // Parameterless constructor for Entity Framework
+        protected FinancialTransaction()
+        {
+            Description = "";
+            Category = "";
+            Date = DateTime.Now;
+        }
     }
 }
-

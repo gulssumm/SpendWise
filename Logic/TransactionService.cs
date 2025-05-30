@@ -1,4 +1,7 @@
 ﻿using Data;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Logic
 {
@@ -11,8 +14,11 @@ namespace Logic
             _transactionRepository = transactionRepository;
         }
 
-        // This property only if necessary for testing
-        public ITransactionRepository TransactionRepository => _transactionRepository;
+        // Parameterless constructor for when DI is not set up
+        public TransactionService()
+        {
+            _transactionRepository = new TransactionRepository();
+        }
 
         public void AddTransaction(string description, decimal amount, bool isExpense, TransactionCategory category, User user)
         {
@@ -28,14 +34,14 @@ namespace Logic
             if (amount <= 0)
                 throw new ArgumentOutOfRangeException(nameof(amount), "Amount must be greater than zero.");
 
-            var transaction = new ConcreteFinancialTransaction(description, amount, isExpense, category.Name, DateTime.Now);
-            var transactionEvent = new ConcreteUserEvent(user.Id,
+            // Create instances using Logic layer implementations
+            var transaction = new LogicFinancialTransaction(description, amount, isExpense, category.Name, DateTime.Now);
+            var transactionEvent = new LogicUserEvent(user.Id,
                 $"User {user.Name} added transaction: {description}, Amount: {amount}, Category: {category.Name}");
 
             _transactionRepository.AddTransaction(transaction);
             _transactionRepository.AddEvent(transactionEvent);
         }
-
 
         public List<FinancialTransaction> GetTransactions()
         {
@@ -45,7 +51,7 @@ namespace Logic
         public ProcessState GetProcessState()
         {
             var transactions = _transactionRepository.GetTransactions();
-            var state = new ConcreteTransactionProcessState();
+            var state = new LogicTransactionProcessState();
 
             foreach (var t in transactions)
             {
@@ -54,15 +60,12 @@ namespace Logic
                 else
                     state.TotalIncome += t.Amount;
 
-                // Add each transaction to the Transactions collection (read-only property)
                 state.Transactions.Add(t);
             }
 
             state.CurrentBalance = state.TotalIncome - state.TotalExpenses;
-
             return state;
         }
-
 
         public void SaveTransactions()
         {
@@ -93,6 +96,45 @@ namespace Logic
             decimal income = transactions.Where(t => !t.IsExpense).Sum(t => t.Amount);
             decimal expense = transactions.Where(t => t.IsExpense).Sum(t => t.Amount);
             return income - expense;
+        }
+
+        // Logic layer implementations - separate from Data layer concrete classes
+        private class LogicFinancialTransaction : FinancialTransaction
+        {
+            // Parameterless constructor required
+            public LogicFinancialTransaction() : base()
+            {
+            }
+
+            public LogicFinancialTransaction(string description, decimal amount, bool isExpense, string category, DateTime date)
+                : base(description, amount, isExpense, category, date)
+            {
+            }
+        }
+
+        private class LogicUserEvent : UserEvent
+        {
+            // Parameterless constructor required
+            public LogicUserEvent() : base(Guid.Empty, "")
+            {
+            }
+
+            public LogicUserEvent(Guid userId, string description)
+                : base(userId, description)
+            {
+            }
+        }
+
+        private class LogicTransactionProcessState : TransactionProcessState
+        {
+            private readonly List<FinancialTransaction> _transactions = new();
+
+            public override IList<FinancialTransaction> Transactions => _transactions;
+
+            public override decimal CalculateBalance()
+            {
+                return _transactions.Sum(t => t.IsExpense ? -t.Amount : t.Amount);
+            }
         }
     }
 }

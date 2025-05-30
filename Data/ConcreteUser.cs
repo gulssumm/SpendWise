@@ -1,7 +1,6 @@
 ﻿using System;
-using Data;
 
-namespace Logic
+namespace Data
 {
     public class ConcreteUser : User
     {
@@ -11,9 +10,9 @@ namespace Logic
             Name = string.Empty;
         }
 
-        public ConcreteUser(Guid Id, string name)
+        public ConcreteUser(Guid id, string name)
         {
-            Id = Guid.NewGuid();
+            Id = id;
             Name = name;
         }
     }

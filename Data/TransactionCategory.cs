@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace Data
 {
@@ -13,6 +12,13 @@ namespace Data
         {
             Name = name;
             Description = description;
+        }
+
+        // Parameterless constructor for Entity Framework
+        protected TransactionCategory()
+        {
+            Name = "";
+            Description = "";
         }
     }
 }

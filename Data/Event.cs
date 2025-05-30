@@ -8,6 +8,7 @@ namespace Data
 {
     public abstract class Event
     {
+        public int Id { get; set; } // Primary key for database
         public Guid UserId { get; set; }
         public string Description { get; set; } = "";
         public DateTime Timestamp { get; set; }
