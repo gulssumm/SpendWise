@@ -1,34 +1,35 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Logic;
-using Data;
+﻿using Data;
+using System;
+using System.Collections.Generic;
 
 namespace LogicTest
 {
     public static class TestDataGenerator
     {
-        public static ConcreteUser GenerateTestUser()
+        // Return abstract types from Data layer (public accessible)
+        public static User GenerateTestUser()
         {
-            return new ConcreteUser(Guid.NewGuid(), "Test User");
+            return new TestUser(Guid.NewGuid(), "Test User");
         }
 
-        public static ConcreteTransactionCategory GenerateTestTransactionCategory()
+        public static TransactionCategory GenerateTestTransactionCategory()
         {
-            return new ConcreteTransactionCategory("Test Category", "Sample category");
+            return new TestTransactionCategory("Test Category", "Sample category");
         }
 
-        public static ConcreteFinancialTransaction GenerateTransaction(string description, decimal amount, bool isExpense, string category, DateTime? date = null)
+        public static FinancialTransaction GenerateTransaction(string description, decimal amount, bool isExpense, string category, DateTime? date = null)
         {
-            return new ConcreteFinancialTransaction(description, amount, isExpense, category, date ?? DateTime.Now);
+            return new TestFinancialTransaction(description, amount, isExpense, category, date ?? DateTime.Now);
         }
 
-        public static ConcreteUserEvent GenerateTestEvent()
+        public static Event GenerateTestEvent()
         {
-            return new ConcreteUserEvent(Guid.NewGuid(), "Test Event");
+            return new TestUserEvent(Guid.NewGuid(), "Test Event");
         }
 
-        public static List<ConcreteFinancialTransaction> GenerateMultipleTransactions(int count)
+        public static List<FinancialTransaction> GenerateMultipleTransactions(int count)
         {
-            var list = new List<ConcreteFinancialTransaction>();
+            var list = new List<FinancialTransaction>();
             for (int i = 0; i < count; i++)
             {
                 list.Add(GenerateTransaction(
@@ -40,6 +41,39 @@ namespace LogicTest
                 ));
             }
             return list;
+        }
+
+        // Test implementations - made PUBLIC to fix accessibility
+        public class TestUser : User
+        {
+            public TestUser(Guid id, string name)
+            {
+                Id = id;
+                Name = name;
+            }
+        }
+
+        public class TestTransactionCategory : TransactionCategory
+        {
+            public TestTransactionCategory(string name, string description) : base(name, description)
+            {
+            }
+        }
+
+        public class TestFinancialTransaction : FinancialTransaction
+        {
+            public TestFinancialTransaction(string description, decimal amount, bool isExpense, string category, DateTime date)
+                : base(description, amount, isExpense, category, date)
+            {
+            }
+        }
+
+        public class TestUserEvent : UserEvent
+        {
+            public TestUserEvent(Guid userId, string description)
+                : base(userId, description)
+            {
+            }
         }
     }
 }

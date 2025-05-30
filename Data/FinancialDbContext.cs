@@ -53,7 +53,7 @@ namespace Data
                 // Use SQL Server LocalDB for development
                 optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=FinancialApp;Trusted_Connection=true;MultipleActiveResultSets=true;");
 
-                // For testing, you can also use In-Memory database:
+                // For testing, use In-Memory database:
                 // optionsBuilder.UseInMemoryDatabase("FinancialAppTestDb");
             }
         }
