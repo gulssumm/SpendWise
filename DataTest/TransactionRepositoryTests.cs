@@ -54,6 +54,9 @@ namespace DataTest
             var userId = Guid.NewGuid();
             var eventObj = new TestUserEvent(userId, "Test event occurred");
 
+            // Debug: Verify the event object has correct UserId before storing
+            Assert.AreEqual(userId, eventObj.UserId, "UserId should be set correctly in test object");
+
             // Act
             _repository.AddEvent(eventObj);
 
@@ -61,7 +64,7 @@ namespace DataTest
             var storedEvents = _repository.GetEvents();
             Assert.AreEqual(1, storedEvents.Count);
             Assert.AreEqual("Test event occurred", storedEvents[0].Description);
-            Assert.AreEqual(userId, storedEvents[0].UserId);
+            Assert.AreEqual(userId, storedEvents[0].UserId, "Stored event should have correct UserId");
         }
 
         [TestMethod]
@@ -146,9 +149,15 @@ namespace DataTest
 
         private class TestUserEvent : UserEvent
         {
+            public TestUserEvent() : base()
+            {
+            }
+
             public TestUserEvent(Guid userId, string description)
                 : base(userId, description)
             {
+                // Ensure UserId is explicitly set
+                UserId = userId;
             }
         }
     }

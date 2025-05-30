@@ -8,13 +8,16 @@ namespace Data
 {
     public class UserEvent : Event
     {
-        public Guid UserId { get; set; }
-
         public UserEvent(Guid userId, string description)
         {
-            UserId = userId;
+            UserId = userId;  // This sets the base class property
             Description = description;
             Timestamp = DateTime.Now;
+        }
+
+        // Parameterless constructor for Entity Framework
+        public UserEvent() : base()
+        {
         }
     }
 }
