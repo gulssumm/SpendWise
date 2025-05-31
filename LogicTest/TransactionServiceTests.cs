@@ -9,8 +9,8 @@ namespace LogicTest
     [TestClass]
     public class TransactionServiceTests
     {
-        private MockTransactionRepository _mockRepository;
-        private TransactionService _transactionService;
+        private MockTransactionRepository _mockRepository = null!;
+        private TransactionService _transactionService = null!; 
 
         [TestInitialize]
         public void Setup()
@@ -122,12 +122,13 @@ namespace LogicTest
             var processState = _transactionService.GetProcessState();
 
             // Assert
+            Assert.IsNotNull(processState);
             Assert.AreEqual(1500.00m, processState.TotalIncome);
             Assert.AreEqual(300.00m, processState.TotalExpenses);
             Assert.AreEqual(1200.00m, processState.CurrentBalance);
         }
 
-        // Test helper classes - these are for LogicTest only
+        // Test helper classes - LogicTest only
         private class TestTransactionCategory : TransactionCategory
         {
             public TestTransactionCategory(string name, string description) : base(name, description)

@@ -9,8 +9,8 @@ namespace DataTest
     [TestClass]
     public class TransactionRepositoryTests
     {
-        private FinancialDbContext _context;
-        private TransactionRepository _repository;
+        private FinancialDbContext _context = null!; 
+        private TransactionRepository _repository = null!; 
 
         [TestInitialize]
         public void Setup()

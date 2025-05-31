@@ -64,7 +64,7 @@ namespace Logic
             return income - expense;
         }
 
-        public async Task<ProcessState> GetProcessStateAsync()
+        public async Task<ProcessState?> GetProcessStateAsync()
         {
             var transactions = await _transactionRepository.GetTransactionsAsync();
             var state = new LogicTransactionProcessState();
@@ -124,7 +124,7 @@ namespace Logic
             return _transactionRepository.GetTransactions();
         }
 
-        public ProcessState GetProcessState()
+        public ProcessState? GetProcessState()
         {
             var transactions = _transactionRepository.GetTransactions();
             var state = new LogicTransactionProcessState();

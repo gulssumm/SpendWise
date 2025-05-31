@@ -13,7 +13,7 @@ namespace PresentationTest
         [TestMethod]
         public void MainViewModel_WithDependencyInjection_ShouldInitializeCorrectly()
         {
-            // Arrange & Act - Test dependency injection pattern
+            // Arrange and Act - Test dependency injection pattern
             var mockService = new MockTransactionService();
             var viewModel = new MainViewModel(mockService);
 
