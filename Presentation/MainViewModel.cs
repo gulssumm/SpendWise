@@ -10,11 +10,10 @@ using Data;
 
 namespace Presentation
 {
-    // MVVM ViewModel - uses only abstract Logic layer API
     public class MainViewModel : INotifyPropertyChanged
     {
         private readonly ITransactionService _transactionService;
-        private FinancialTransaction _selectedTransaction;
+        private FinancialTransaction? _selectedTransaction;
         private bool _isLoading;
 
         public MainViewModel(ITransactionService transactionService)
@@ -22,10 +21,9 @@ namespace Presentation
             _transactionService = transactionService;
             Transactions = new ObservableCollection<FinancialTransaction>();
             InitializeCommands();
-            _ = LoadTransactionsAsync(); 
+            _ = LoadTransactionsAsync();
         }
 
-        // Parameterless constructor for testing
         public MainViewModel()
         {
             _transactionService = new TransactionService();
@@ -33,10 +31,9 @@ namespace Presentation
             InitializeCommands();
         }
 
-        // Properties
         public ObservableCollection<FinancialTransaction> Transactions { get; set; }
 
-        public FinancialTransaction SelectedTransaction
+        public FinancialTransaction? SelectedTransaction
         {
             get => _selectedTransaction;
             set
@@ -73,12 +70,11 @@ namespace Presentation
 
         public decimal Balance => _transactionService.GetBalance();
 
-        // Commands
-        public ICommand AddTransactionCommand { get; private set; }
-        public ICommand EditTransactionCommand { get; private set; }
-        public ICommand DeleteTransactionCommand { get; private set; }
-        public ICommand SaveTransactionsCommand { get; private set; }
-        public ICommand RefreshCommand { get; private set; }
+        public ICommand AddTransactionCommand { get; private set; } = null!;
+        public ICommand EditTransactionCommand { get; private set; } = null!;
+        public ICommand DeleteTransactionCommand { get; private set; } = null!;
+        public ICommand SaveTransactionsCommand { get; private set; } = null!;
+        public ICommand RefreshCommand { get; private set; } = null!;
 
         private void InitializeCommands()
         {
@@ -89,7 +85,6 @@ namespace Presentation
             RefreshCommand = new AsyncRelayCommand(LoadTransactionsAsync);
         }
 
-        // CRUD Operations - Asynchronous 
         private async Task AddTransactionAsync()
         {
             try
@@ -125,7 +120,6 @@ namespace Presentation
             try
             {
                 IsLoading = true;
-               
                 await _transactionService.UpdateTransactionAsync(
                     SelectedTransaction.Id,
                     SelectedTransaction.Description + " (Edited)",
@@ -156,7 +150,7 @@ namespace Presentation
                 await _transactionService.DeleteTransactionAsync(SelectedTransaction.Id);
                 await LoadTransactionsAsync();
                 OnPropertyChanged(nameof(Balance));
-                SelectedTransaction = null; // Clear selection
+                SelectedTransaction = null;
             }
             catch (Exception ex)
             {
@@ -207,13 +201,12 @@ namespace Presentation
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        // Helper classes
         private class TestCategory : TransactionCategory
         {
             public TestCategory(string name, string description) : base(name, description) { }
@@ -229,24 +222,23 @@ namespace Presentation
         }
     }
 
-    // Async Command Implementation
     public class AsyncRelayCommand : ICommand
     {
         private readonly Func<Task> _execute;
-        private readonly Func<bool> _canExecute;
+        private readonly Func<bool>? _canExecute;
         private bool _isExecuting;
 
-        public AsyncRelayCommand(Func<Task> execute, Func<bool> canExecute = null)
+        public AsyncRelayCommand(Func<Task> execute, Func<bool>? canExecute = null)
         {
             _execute = execute;
             _canExecute = canExecute;
         }
 
-        public event EventHandler CanExecuteChanged;
+        public event EventHandler? CanExecuteChanged;
 
-        public bool CanExecute(object parameter) => !_isExecuting && (_canExecute?.Invoke() ?? true);
+        public bool CanExecute(object? parameter) => !_isExecuting && (_canExecute?.Invoke() ?? true);
 
-        public async void Execute(object parameter)
+        public async void Execute(object? parameter)
         {
             if (_isExecuting) return;
 

@@ -8,7 +8,7 @@ namespace Data
         // CRUD Operations
         Task AddTransactionAsync(FinancialTransaction transaction);
         Task<List<FinancialTransaction>> GetTransactionsAsync();
-        Task<FinancialTransaction> GetTransactionByIdAsync(int id);
+        Task<FinancialTransaction?> GetTransactionByIdAsync(int id);
         Task UpdateTransactionAsync(FinancialTransaction transaction);
         Task DeleteTransactionAsync(int id);
 

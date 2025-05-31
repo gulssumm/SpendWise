@@ -9,8 +9,7 @@ namespace Data
     public abstract class CatalogItem
     {
         public int Id { get; set; }
-        public string Name { get; set; } // e.g., "Food", "Rent", "Utilities"
-        public string Description { get; set; }
+        public string Name { get; set; } = ""; // Initialize to avoid nullable warning
+        public string Description { get; set; } = ""; 
     }
 }
-

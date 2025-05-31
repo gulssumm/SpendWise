@@ -3,6 +3,7 @@ using Presentation;
 using Logic;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace PresentationTest
 {
@@ -115,14 +116,61 @@ namespace PresentationTest
         // Mock service for testing - implements dependency injection pattern
         private class MockTransactionService : ITransactionService
         {
+            // Async implementations
+            public async Task AddTransactionAsync(string description, decimal amount, bool isExpense, Data.TransactionCategory category, Data.User user)
+            {
+                await Task.CompletedTask; // Mock implementation
+            }
+
+            public async Task<List<Data.FinancialTransaction>> GetTransactionsAsync()
+            {
+                return await Task.FromResult(new List<Data.FinancialTransaction>());
+            }
+
+            public async Task UpdateTransactionAsync(int id, string description, decimal amount, bool isExpense, string category)
+            {
+                await Task.CompletedTask; // Mock implementation
+            }
+
+            public async Task DeleteTransactionAsync(int id)
+            {
+                await Task.CompletedTask; // Mock implementation
+            }
+
+            public async Task<decimal> GetBalanceAsync()
+            {
+                return await Task.FromResult(0m);
+            }
+
+            public async Task<Data.ProcessState?> GetProcessStateAsync()
+            {
+                return await Task.FromResult<Data.ProcessState?>(null);
+            }
+
+            public async Task SaveTransactionsAsync()
+            {
+                await Task.CompletedTask; // Mock implementation
+            }
+
+            public async Task LoadTransactionsAsync()
+            {
+                await Task.CompletedTask; // Mock implementation
+            }
+
+            public async Task<List<Data.FinancialTransaction>> GetMonthlyReportAsync(int month, int year)
+            {
+                return await Task.FromResult(new List<Data.FinancialTransaction>());
+            }
+
+            // Synchronous implementations for compatibility
             public void AddTransaction(string description, decimal amount, bool isExpense, Data.TransactionCategory category, Data.User user)
             {
-                // Mock implementation - do nothing
+                // Mock implementation
             }
 
             public List<Data.FinancialTransaction> GetTransactions() => new List<Data.FinancialTransaction>();
             public decimal GetBalance() => 0m;
-            public Data.ProcessState GetProcessState() => null;
+            public Data.ProcessState? GetProcessState() => null;
             public void SaveTransactions() { }
             public void LoadTransactions() { }
             public List<Data.FinancialTransaction> GetMonthlyReport(int month, int year) => new List<Data.FinancialTransaction>();
