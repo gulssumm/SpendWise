@@ -6,7 +6,7 @@ namespace LogicTest
 {
     public static class TestDataGenerator
     {
-        // Return abstract types from Data layer (public accessible)
+        // Return abstract types from Data layer 
         public static User GenerateTestUser()
         {
             return new TestUser(Guid.NewGuid(), "Test User");
@@ -43,7 +43,7 @@ namespace LogicTest
             return list;
         }
 
-        // Test implementations - made PUBLIC to fix accessibility
+        // Test implementations
         public class TestUser : User
         {
             public TestUser(Guid id, string name)

@@ -26,7 +26,7 @@ namespace PresentationTest
         [TestMethod]
         public void MainViewModel_ParameterlessConstructor_ShouldWork()
         {
-            // Arrange & Act - Test parameterless constructor (non-DI scenario)
+            // Arrange & Act - Test parameterless constructor
             var viewModel = new MainViewModel();
 
             // Assert
