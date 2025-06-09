@@ -1,19 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data.Linq.Mapping;
 
 namespace Data
 {
-    public abstract class FinancialTransaction
+    [Table(Name = "Transactions")]
+    public class FinancialTransaction : IFinancialTransaction
     {
-        public int Id { get; set; } // Primary key for database
-        public string Description { get; set; }
-        public decimal Amount { get; set; }
-        public bool IsExpense { get; set; }
-        public string Category { get; set; }
-        public DateTime Date { get; set; }
+        public FinancialTransaction() { }
 
         public FinancialTransaction(string description, decimal amount, bool isExpense, string category, DateTime date)
         {
@@ -24,12 +17,25 @@ namespace Data
             Date = date;
         }
 
-        // Parameterless constructor for Entity Framework
-        protected FinancialTransaction()
-        {
-            Description = "";
-            Category = "";
-            Date = DateTime.Now;
-        }
+        [Column(IsPrimaryKey = true, IsDbGenerated = true)]
+        public int Id { get; set; }
+
+        [Column]
+        public string Description { get; set; } = string.Empty;
+
+        [Column]
+        public decimal Amount { get; set; }
+
+        [Column]
+        public bool IsExpense { get; set; }
+
+        [Column]
+        public string Category { get; set; } = string.Empty;
+
+        [Column]
+        public DateTime Date { get; set; }
+
+        [Column]
+        public Guid? UserId { get; set; }
     }
 }

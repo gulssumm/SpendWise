@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -13,130 +12,175 @@ namespace Presentation
     public class MainViewModel : INotifyPropertyChanged
     {
         private readonly ITransactionService _transactionService;
-        private FinancialTransaction? _selectedTransaction;
-        private bool _isLoading;
+        private IFinancialTransaction _selectedTransaction;
+        private string _newDescription = "";
+        private decimal _newAmount;
+        private bool _newIsExpense = true;
+        private string _newCategory = "";
+        private DateTime _newDate = DateTime.Today;
 
+        // Constructor for dependency injection
         public MainViewModel(ITransactionService transactionService)
         {
-            _transactionService = transactionService;
-            Transactions = new ObservableCollection<FinancialTransaction>();
-            InitializeCommands();
-            _ = LoadTransactionsAsync();
+            _transactionService = transactionService ?? throw new ArgumentNullException(nameof(transactionService));
+
+            // Initialize collections using interface types
+            Transactions = new ObservableCollection<IFinancialTransaction>();
+            Users = new ObservableCollection<IUser>();
+            Categories = new ObservableCollection<ITransactionCategory>();
+
+            // Initialize commands
+            AddTransactionCommand = new RelayCommand(async () => await AddTransactionAsync(), CanAddTransaction);
+            DeleteTransactionCommand = new RelayCommand(async () => await DeleteTransactionAsync(), () => SelectedTransaction != null);
+            LoadDataCommand = new RelayCommand(async () => await LoadDataAsync());
+
+            // Load initial data
+            _ = LoadDataAsync();
         }
 
-        public MainViewModel()
-        {
-            _transactionService = new TransactionService();
-            Transactions = new ObservableCollection<FinancialTransaction>();
-            InitializeCommands();
-        }
+        // Master-Detail pattern
+        public ObservableCollection<IFinancialTransaction> Transactions { get; }
+        public ObservableCollection<IUser> Users { get; }
+        public ObservableCollection<ITransactionCategory> Categories { get; }
 
-        public ObservableCollection<FinancialTransaction> Transactions { get; set; }
-
-        public FinancialTransaction? SelectedTransaction
+        // Selected transaction for detail view
+        public IFinancialTransaction SelectedTransaction
         {
             get => _selectedTransaction;
             set
             {
                 _selectedTransaction = value;
                 OnPropertyChanged(nameof(SelectedTransaction));
-                OnPropertyChanged(nameof(TransactionDetails));
-                OnPropertyChanged(nameof(CanEdit));
-                OnPropertyChanged(nameof(CanDelete));
+                ((RelayCommand)DeleteTransactionCommand).RaiseCanExecuteChanged();
             }
         }
 
-        public bool IsLoading
+        // Properties for adding new transactions
+        public string NewDescription
         {
-            get => _isLoading;
+            get => _newDescription;
             set
             {
-                _isLoading = value;
-                OnPropertyChanged(nameof(IsLoading));
+                _newDescription = value;
+                OnPropertyChanged(nameof(NewDescription));
+                ((RelayCommand)AddTransactionCommand).RaiseCanExecuteChanged();
             }
         }
 
-        public bool CanEdit => SelectedTransaction != null && !IsLoading;
-        public bool CanDelete => SelectedTransaction != null && !IsLoading;
-
-        public string TransactionDetails =>
-            SelectedTransaction != null
-                ? $"Description: {SelectedTransaction.Description}\n" +
-                  $"Amount: ${SelectedTransaction.Amount}\n" +
-                  $"Type: {(SelectedTransaction.IsExpense ? "Expense" : "Income")}\n" +
-                  $"Category: {SelectedTransaction.Category}\n" +
-                  $"Date: {SelectedTransaction.Date:dd/MM/yyyy}"
-                : "Select a transaction to view details";
-
-        public decimal Balance => _transactionService.GetBalance();
-
-        public ICommand AddTransactionCommand { get; private set; } = null!;
-        public ICommand EditTransactionCommand { get; private set; } = null!;
-        public ICommand DeleteTransactionCommand { get; private set; } = null!;
-        public ICommand SaveTransactionsCommand { get; private set; } = null!;
-        public ICommand RefreshCommand { get; private set; } = null!;
-
-        private void InitializeCommands()
+        public decimal NewAmount
         {
-            AddTransactionCommand = new AsyncRelayCommand(AddTransactionAsync);
-            EditTransactionCommand = new AsyncRelayCommand(EditTransactionAsync, () => CanEdit);
-            DeleteTransactionCommand = new AsyncRelayCommand(DeleteTransactionAsync, () => CanDelete);
-            SaveTransactionsCommand = new AsyncRelayCommand(SaveTransactionsAsync);
-            RefreshCommand = new AsyncRelayCommand(LoadTransactionsAsync);
+            get => _newAmount;
+            set
+            {
+                _newAmount = value;
+                OnPropertyChanged(nameof(NewAmount));
+                ((RelayCommand)AddTransactionCommand).RaiseCanExecuteChanged();
+            }
+        }
+
+        public bool NewIsExpense
+        {
+            get => _newIsExpense;
+            set
+            {
+                _newIsExpense = value;
+                OnPropertyChanged(nameof(NewIsExpense));
+            }
+        }
+
+        public string NewCategory
+        {
+            get => _newCategory;
+            set
+            {
+                _newCategory = value;
+                OnPropertyChanged(nameof(NewCategory));
+                ((RelayCommand)AddTransactionCommand).RaiseCanExecuteChanged();
+            }
+        }
+
+        public DateTime NewDate
+        {
+            get => _newDate;
+            set
+            {
+                _newDate = value;
+                OnPropertyChanged(nameof(NewDate));
+            }
+        }
+
+        // Commands
+        public ICommand AddTransactionCommand { get; }
+        public ICommand DeleteTransactionCommand { get; }
+        public ICommand LoadDataCommand { get; }
+
+        // Calculated properties
+        public decimal TotalBalance => Transactions?.Sum(t => t.IsExpense ? -t.Amount : t.Amount) ?? 0;
+        public decimal TotalExpenses => Transactions?.Where(t => t.IsExpense).Sum(t => t.Amount) ?? 0;
+        public decimal TotalIncome => Transactions?.Where(t => !t.IsExpense).Sum(t => t.Amount) ?? 0;
+
+        // Methods
+        private async Task LoadDataAsync()
+        {
+            try
+            {
+                // Load transactions using abstract Logic layer API
+                var transactions = await _transactionService.GetTransactionsAsync();
+                Transactions.Clear();
+                foreach (var transaction in transactions)
+                {
+                    Transactions.Add(transaction);
+                }
+
+                // Load users
+                var users = await _transactionService.GetUsersAsync();
+                Users.Clear();
+                foreach (var user in users)
+                {
+                    Users.Add(user);
+                }
+
+                // Load categories
+                var categories = await _transactionService.GetCategoriesAsync();
+                Categories.Clear();
+                foreach (var category in categories)
+                {
+                    Categories.Add(category);
+                }
+
+                OnPropertyChanged(nameof(TotalBalance));
+                OnPropertyChanged(nameof(TotalExpenses));
+                OnPropertyChanged(nameof(TotalIncome));
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error loading data: {ex.Message}");
+            }
         }
 
         private async Task AddTransactionAsync()
         {
             try
             {
-                IsLoading = true;
-                var category = new TestCategory("Food", "Food expenses");
-                var user = new TestUser(Guid.NewGuid(), "Test User");
+                // New transaction using concrete type
+                var newTransaction = new FinancialTransaction(NewDescription, NewAmount, NewIsExpense, NewCategory, NewDate);
 
-                await _transactionService.AddTransactionAsync(
-                    "Sample Transaction",
-                    50.00m,
-                    true,
-                    category,
-                    user);
+                await _transactionService.AddTransactionAsync(newTransaction);
 
-                await LoadTransactionsAsync();
-                OnPropertyChanged(nameof(Balance));
+                // Add to collection
+                Transactions.Add(newTransaction);
+
+                // Clear form
+                ClearForm();
+
+                // Update calculated properties
+                OnPropertyChanged(nameof(TotalBalance));
+                OnPropertyChanged(nameof(TotalExpenses));
+                OnPropertyChanged(nameof(TotalIncome));
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error adding transaction: {ex.Message}");
-            }
-            finally
-            {
-                IsLoading = false;
-            }
-        }
-
-        private async Task EditTransactionAsync()
-        {
-            if (SelectedTransaction == null) return;
-
-            try
-            {
-                IsLoading = true;
-                await _transactionService.UpdateTransactionAsync(
-                    SelectedTransaction.Id,
-                    SelectedTransaction.Description + " (Edited)",
-                    SelectedTransaction.Amount,
-                    SelectedTransaction.IsExpense,
-                    SelectedTransaction.Category);
-
-                await LoadTransactionsAsync();
-                OnPropertyChanged(nameof(Balance));
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error editing transaction: {ex.Message}");
-            }
-            finally
-            {
-                IsLoading = false;
             }
         }
 
@@ -146,114 +190,80 @@ namespace Presentation
 
             try
             {
-                IsLoading = true;
                 await _transactionService.DeleteTransactionAsync(SelectedTransaction.Id);
-                await LoadTransactionsAsync();
-                OnPropertyChanged(nameof(Balance));
+                Transactions.Remove(SelectedTransaction);
                 SelectedTransaction = null;
+
+                OnPropertyChanged(nameof(TotalBalance));
+                OnPropertyChanged(nameof(TotalExpenses));
+                OnPropertyChanged(nameof(TotalIncome));
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error deleting transaction: {ex.Message}");
             }
-            finally
-            {
-                IsLoading = false;
-            }
         }
 
-        private async Task SaveTransactionsAsync()
+        private bool CanAddTransaction()
         {
-            try
-            {
-                IsLoading = true;
-                await _transactionService.SaveTransactionsAsync();
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error saving transactions: {ex.Message}");
-            }
-            finally
-            {
-                IsLoading = false;
-            }
+            return !string.IsNullOrWhiteSpace(NewDescription) &&
+                   NewAmount > 0 &&
+                   !string.IsNullOrWhiteSpace(NewCategory);
         }
 
-        private async Task LoadTransactionsAsync()
+        private void ClearForm()
         {
-            try
-            {
-                IsLoading = true;
-                var transactions = await _transactionService.GetTransactionsAsync();
-                Transactions.Clear();
-                foreach (var transaction in transactions)
-                {
-                    Transactions.Add(transaction);
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error loading transactions: {ex.Message}");
-            }
-            finally
-            {
-                IsLoading = false;
-            }
+            NewDescription = "";
+            NewAmount = 0;
+            NewIsExpense = true;
+            NewCategory = "";
+            NewDate = DateTime.Today;
         }
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
+
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
-        private class TestCategory : TransactionCategory
-        {
-            public TestCategory(string name, string description) : base(name, description) { }
-        }
-
-        private class TestUser : User
-        {
-            public TestUser(Guid id, string name)
-            {
-                Id = id;
-                Name = name;
-            }
-        }
     }
 
-    public class AsyncRelayCommand : ICommand
+    public class RelayCommand : ICommand
     {
-        private readonly Func<Task> _execute;
-        private readonly Func<bool>? _canExecute;
-        private bool _isExecuting;
+        private readonly Func<Task> _executeAsync;
+        private readonly Func<bool> _canExecute;
+        private readonly Action _execute;
 
-        public AsyncRelayCommand(Func<Task> execute, Func<bool>? canExecute = null)
+        public RelayCommand(Func<Task> executeAsync, Func<bool> canExecute = null)
         {
-            _execute = execute;
+            _executeAsync = executeAsync ?? throw new ArgumentNullException(nameof(executeAsync));
             _canExecute = canExecute;
         }
 
-        public event EventHandler? CanExecuteChanged;
-
-        public bool CanExecute(object? parameter) => !_isExecuting && (_canExecute?.Invoke() ?? true);
-
-        public async void Execute(object? parameter)
+        public RelayCommand(Action execute, Func<bool> canExecute = null)
         {
-            if (_isExecuting) return;
+            _execute = execute ?? throw new ArgumentNullException(nameof(execute));
+            _canExecute = canExecute;
+        }
 
-            _isExecuting = true;
+        public event EventHandler CanExecuteChanged;
+
+        public bool CanExecute(object parameter)
+        {
+            return _canExecute?.Invoke() ?? true;
+        }
+
+        public async void Execute(object parameter)
+        {
+            if (_executeAsync != null)
+                await _executeAsync();
+            else
+                _execute?.Invoke();
+        }
+
+        public void RaiseCanExecuteChanged()
+        {
             CanExecuteChanged?.Invoke(this, EventArgs.Empty);
-
-            try
-            {
-                await _execute();
-            }
-            finally
-            {
-                _isExecuting = false;
-                CanExecuteChanged?.Invoke(this, EventArgs.Empty);
-            }
         }
     }
 }

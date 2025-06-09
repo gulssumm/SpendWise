@@ -1,21 +1,26 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
-		<LangVersion>latest</LangVersion>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
+		<OutputType>Library</OutputType>
+		<TargetFramework>net472</TargetFramework>
+		<RootNamespace>LogicTest</RootNamespace>
 		<IsPackable>false</IsPackable>
+		<IsTestProject>true</IsTestProject>
+		<LangVersion>10.0</LangVersion>
+		<Nullable>disable</Nullable>
 	</PropertyGroup>
-
 	<ItemGroup>
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.0" />
-		<PackageReference Include="MSTest.TestFramework" Version="3.6.4" />
-		<PackageReference Include="MSTest.TestAdapter" Version="3.6.4" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0" />
+		<PackageReference Include="MSTest.TestFramework" Version="3.1.1" />
+		<PackageReference Include="MSTest.TestAdapter" Version="3.1.1" />
+		<PackageReference Include="coverlet.collector" Version="6.0.0">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="Moq" Version="4.20.69" />
 	</ItemGroup>
-
 	<ItemGroup>
+		<ProjectReference Include="..\Data\Data.csproj" />
 		<ProjectReference Include="..\Logic\Logic.csproj" />
+		<ProjectReference Include="..\DataTest\DataTest.csproj" />
 	</ItemGroup>
-
 </Project>

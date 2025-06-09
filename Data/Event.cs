@@ -1,16 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data.Linq.Mapping;
 
 namespace Data
 {
-    public abstract class Event
+    [Table(Name = "Events")]
+    public class Event : IEvent
     {
-        public int Id { get; set; } // Primary key for database
+        [Column(IsPrimaryKey = true, IsDbGenerated = true)]
+        public int Id { get; set; }
+
+        [Column]
         public Guid UserId { get; set; }
-        public string Description { get; set; } = "";
+
+        [Column]
+        public string Description { get; set; } = string.Empty;
+
+        [Column]
         public DateTime Timestamp { get; set; }
     }
 }

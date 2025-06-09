@@ -1,186 +1,207 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Presentation;
 using Logic;
+using Data;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace PresentationTest
 {
     [TestClass]
     public class MainViewModelTests
     {
-        [TestMethod]
-        public void MainViewModel_WithDependencyInjection_ShouldInitializeCorrectly()
-        {
-            // Arrange and Act - Test dependency injection pattern
-            var mockService = new MockTransactionService();
-            var viewModel = new MainViewModel(mockService);
+        private MainViewModel _viewModel;
+        private PresentationTestMockService _mockService;
 
-            // Assert
-            Assert.IsNotNull(viewModel.Transactions, "Transactions collection should be initialized");
-            Assert.IsNotNull(viewModel.AddTransactionCommand, "AddTransactionCommand should be initialized");
-            Assert.AreEqual(0, viewModel.Transactions.Count, "Should start with empty transactions");
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            // Dependency injection for testing - using mock service
+            _mockService = new PresentationTestMockService();
+            _viewModel = new MainViewModel(_mockService);
         }
 
         [TestMethod]
-        public void MainViewModel_ParameterlessConstructor_ShouldWork()
+        public async Task ViewModel_LoadsTransactionsOnInitialization()
         {
-            // Arrange & Act - Test parameterless constructor
-            var viewModel = new MainViewModel();
+            // Wait a moment for async initialization
+            await Task.Delay(100);
 
             // Assert
-            Assert.IsNotNull(viewModel.Transactions, "Transactions should be initialized");
-            Assert.IsNotNull(viewModel.AddTransactionCommand, "Command should be initialized");
+            Assert.IsTrue(_viewModel.Transactions.Count > 0, "Should load transactions on initialization");
+            Assert.IsTrue(_viewModel.Users.Count > 0, "Should load users on initialization");
+            Assert.IsTrue(_viewModel.Categories.Count > 0, "Should load categories on initialization");
         }
 
         [TestMethod]
-        public void SelectedTransaction_WhenSet_ShouldTriggerPropertyChanged()
+        public void ViewModel_CalculatesBalanceCorrectly()
+        {
+            // Arrange - Add test data
+            _viewModel.Transactions.Clear();
+            _viewModel.Transactions.Add(new FinancialTransaction("Income", 1000m, false, "Salary", DateTime.Today));
+            _viewModel.Transactions.Add(new FinancialTransaction("Expense", 300m, true, "Food", DateTime.Today));
+
+            // Assert
+            Assert.AreEqual(700m, _viewModel.TotalBalance);
+            Assert.AreEqual(300m, _viewModel.TotalExpenses);
+            Assert.AreEqual(1000m, _viewModel.TotalIncome);
+        }
+
+        [TestMethod]
+        public void ViewModel_MasterDetailPattern_SelectedTransactionWorks()
         {
             // Arrange
-            var viewModel = new MainViewModel();
-            var transaction = new TestTransaction("Test", 100m, false, "Income", DateTime.Now);
-            bool propertyChangedTriggered = false;
+            var transaction = new FinancialTransaction("Test", 100m, true, "Test", DateTime.Today);
+            _viewModel.Transactions.Add(transaction);
 
-            viewModel.PropertyChanged += (sender, e) =>
-            {
-                if (e.PropertyName == nameof(viewModel.SelectedTransaction) ||
-                    e.PropertyName == nameof(viewModel.TransactionDetails))
-                    propertyChangedTriggered = true;
+            // Act
+            _viewModel.SelectedTransaction = transaction;
+
+            // Assert
+            Assert.AreEqual(transaction, _viewModel.SelectedTransaction);
+        }
+
+        [TestMethod]
+        public void ViewModel_AddTransactionCommand_CanExecuteValidation()
+        {
+            // Arrange - Invalid data
+            _viewModel.NewDescription = "";
+            _viewModel.NewAmount = 0;
+            _viewModel.NewCategory = "";
+
+            // Assert
+            Assert.IsFalse(_viewModel.AddTransactionCommand.CanExecute(null));
+
+            // Arrange - Valid data
+            _viewModel.NewDescription = "Test";
+            _viewModel.NewAmount = 100;
+            _viewModel.NewCategory = "Test";
+
+            // Assert
+            Assert.IsTrue(_viewModel.AddTransactionCommand.CanExecute(null));
+        }
+
+        [TestMethod]
+        public void ViewModel_DeleteTransactionCommand_CanExecuteValidation()
+        {
+            // Assert - No selection
+            Assert.IsFalse(_viewModel.DeleteTransactionCommand.CanExecute(null));
+
+            // Arrange - With selection
+            _viewModel.SelectedTransaction = new FinancialTransaction("Test", 100m, true, "Test", DateTime.Today);
+
+            // Assert
+            Assert.IsTrue(_viewModel.DeleteTransactionCommand.CanExecute(null));
+        }
+
+        [TestMethod]
+        public async Task ViewModel_UsesAbstractLogicLayerAPI()
+        {
+            // Act - Call methods
+            _viewModel.LoadDataCommand.Execute(null);
+
+            // Wait for async operation to complete
+            await Task.Delay(100);
+
+            // Assert - Verify
+            Assert.IsTrue(_mockService.GetTransactionsAsyncCalled, "Should call abstract service API");
+            Assert.IsTrue(_mockService.GetUsersAsyncCalled, "Should call abstract service API");
+            Assert.IsTrue(_mockService.GetCategoriesAsyncCalled, "Should call abstract service API");
+        }
+
+        [TestMethod]
+        public void ViewModel_PropertyChanged_FiresCorrectly()
+        {
+            // Arrange
+            bool propertyChangedFired = false;
+            _viewModel.PropertyChanged += (s, e) => {
+                if (e.PropertyName == nameof(_viewModel.NewDescription))
+                    propertyChangedFired = true;
             };
 
             // Act
-            viewModel.SelectedTransaction = transaction;
+            _viewModel.NewDescription = "Test";
 
             // Assert
-            Assert.AreEqual(transaction, viewModel.SelectedTransaction);
-            Assert.IsTrue(propertyChangedTriggered, "PropertyChanged should be triggered");
-            Assert.IsTrue(viewModel.TransactionDetails.Contains("Test"), "Details should contain transaction description");
+            Assert.IsTrue(propertyChangedFired, "PropertyChanged should fire for data binding");
         }
+    }
 
-        [TestMethod]
-        public void TransactionDetails_WhenNoSelection_ShouldShowDefaultMessage()
+    // Mock service for Presentation layer testing - demonstrates independence
+    public class PresentationTestMockService : ITransactionService
+    {
+        private readonly List<IFinancialTransaction> _transactions = new List<IFinancialTransaction>();
+        private readonly List<IUser> _users = new List<IUser>();
+        private readonly List<ITransactionCategory> _categories = new List<ITransactionCategory>();
+
+        // Properties to verify method calls
+        public bool GetTransactionsAsyncCalled { get; private set; }
+        public bool GetUsersAsyncCalled { get; private set; }
+        public bool GetCategoriesAsyncCalled { get; private set; }
+
+        public PresentationTestMockService()
         {
-            // Arrange
-            var viewModel = new MainViewModel();
+            // Test data for Presentation layer
+            var user = new User { Id = Guid.NewGuid(), Name = "Presentation Test User" };
+            _users.Add(user);
 
-            // Act
-            var details = viewModel.TransactionDetails;
+            _categories.Add(new TransactionCategory("Food", "Food expenses") { Id = 1 });
+            _categories.Add(new TransactionCategory("Transport", "Transport expenses") { Id = 2 });
 
-            // Assert
-            Assert.AreEqual("Select a transaction to view details", details);
+            _transactions.Add(new FinancialTransaction("Presentation Test", 50m, true, "Food", DateTime.Today) { UserId = user.Id });
+            _transactions.Add(new FinancialTransaction("Presentation Income", 1000m, false, "Salary", DateTime.Today) { UserId = user.Id });
         }
 
-        [TestMethod]
-        public void TransactionDetails_WhenTransactionSelected_ShouldShowDetails()
+        public async Task<List<IFinancialTransaction>> GetTransactionsAsync()
         {
-            // Arrange
-            var viewModel = new MainViewModel();
-            var transaction = new TestTransaction("Grocery Shopping", 75.50m, true, "Food", DateTime.Now);
-
-            // Act
-            viewModel.SelectedTransaction = transaction;
-
-            // Assert
-            var details = viewModel.TransactionDetails;
-            Assert.IsTrue(details.Contains("Grocery Shopping"), "Should contain description");
-            Assert.IsTrue(details.Contains("75.50"), "Should contain amount");
-            Assert.IsTrue(details.Contains("Expense"), "Should show expense type");
-            Assert.IsTrue(details.Contains("Food"), "Should contain category");
+            GetTransactionsAsyncCalled = true;
+            return await Task.FromResult(_transactions);
         }
 
-        [TestMethod]
-        public void AddTransactionCommand_ShouldBeExecutable()
+        public async Task<List<IUser>> GetUsersAsync()
         {
-            // Arrange
-            var viewModel = new MainViewModel();
-
-            // Act & Assert
-            Assert.IsTrue(viewModel.AddTransactionCommand.CanExecute(null), "Command should be executable");
+            GetUsersAsyncCalled = true;
+            return await Task.FromResult(_users);
         }
 
-        [TestMethod]
-        public void Balance_ShouldReturnServiceBalance()
+        public async Task<List<ITransactionCategory>> GetCategoriesAsync()
         {
-            // Arrange
-            var mockService = new MockTransactionService();
-            var viewModel = new MainViewModel(mockService);
-
-            // Act
-            var balance = viewModel.Balance;
-
-            // Assert
-            Assert.AreEqual(0m, balance, "Should return mock service balance");
+            GetCategoriesAsyncCalled = true;
+            return await Task.FromResult(_categories);
         }
 
-        // Mock service for testing - implements dependency injection pattern
-        private class MockTransactionService : ITransactionService
+        public async Task AddTransactionAsync(IFinancialTransaction transaction)
         {
-            // Async implementations
-            public async Task AddTransactionAsync(string description, decimal amount, bool isExpense, Data.TransactionCategory category, Data.User user)
-            {
-                await Task.CompletedTask; // Mock implementation
-            }
-
-            public async Task<List<Data.FinancialTransaction>> GetTransactionsAsync()
-            {
-                return await Task.FromResult(new List<Data.FinancialTransaction>());
-            }
-
-            public async Task UpdateTransactionAsync(int id, string description, decimal amount, bool isExpense, string category)
-            {
-                await Task.CompletedTask; // Mock implementation
-            }
-
-            public async Task DeleteTransactionAsync(int id)
-            {
-                await Task.CompletedTask; // Mock implementation
-            }
-
-            public async Task<decimal> GetBalanceAsync()
-            {
-                return await Task.FromResult(0m);
-            }
-
-            public async Task<Data.ProcessState?> GetProcessStateAsync()
-            {
-                return await Task.FromResult<Data.ProcessState?>(null);
-            }
-
-            public async Task SaveTransactionsAsync()
-            {
-                await Task.CompletedTask; // Mock implementation
-            }
-
-            public async Task LoadTransactionsAsync()
-            {
-                await Task.CompletedTask; // Mock implementation
-            }
-
-            public async Task<List<Data.FinancialTransaction>> GetMonthlyReportAsync(int month, int year)
-            {
-                return await Task.FromResult(new List<Data.FinancialTransaction>());
-            }
-
-            // Synchronous implementations for compatibility
-            public void AddTransaction(string description, decimal amount, bool isExpense, Data.TransactionCategory category, Data.User user)
-            {
-                // Mock implementation
-            }
-
-            public List<Data.FinancialTransaction> GetTransactions() => new List<Data.FinancialTransaction>();
-            public decimal GetBalance() => 0m;
-            public Data.ProcessState? GetProcessState() => null;
-            public void SaveTransactions() { }
-            public void LoadTransactions() { }
-            public List<Data.FinancialTransaction> GetMonthlyReport(int month, int year) => new List<Data.FinancialTransaction>();
+            _transactions.Add(transaction);
+            await Task.CompletedTask;
         }
 
-        // Test helper class
-        private class TestTransaction : Data.FinancialTransaction
+        public async Task DeleteTransactionAsync(int id)
         {
-            public TestTransaction(string description, decimal amount, bool isExpense, string category, DateTime date)
-                : base(description, amount, isExpense, category, date) { }
+            _transactions.RemoveAll(t => t.Id == id);
+            await Task.CompletedTask;
         }
+
+        // Other required interface methods (simplified for testing)
+        public async Task<List<IFinancialTransaction>> GetTransactionsByUserAsync(Guid userId) => await Task.FromResult(new List<IFinancialTransaction>());
+        public async Task<List<IFinancialTransaction>> GetTransactionsByCategory(string category) => await Task.FromResult(new List<IFinancialTransaction>());
+        public async Task<List<IFinancialTransaction>> GetTransactionsByDateRangeAsync(DateTime startDate, DateTime endDate) => await Task.FromResult(new List<IFinancialTransaction>());
+        public async Task UpdateTransactionAsync(IFinancialTransaction transaction) => await Task.CompletedTask;
+        public async Task<decimal> CalculateBalanceAsync() => await Task.FromResult(0m);
+        public async Task<decimal> CalculateBalanceByUserAsync(Guid userId) => await Task.FromResult(0m);
+        public async Task<Dictionary<string, decimal>> GetExpensesByCategoryAsync() => await Task.FromResult(new Dictionary<string, decimal>());
+        public async Task<List<IFinancialTransaction>> GetRecentTransactionsAsync(int count = 10) => await Task.FromResult(new List<IFinancialTransaction>());
+        public async Task<IUser> GetUserAsync(Guid id) => await Task.FromResult((IUser)null);
+        public async Task AddUserAsync(IUser user) => await Task.CompletedTask;
+        public async Task UpdateUserAsync(IUser user) => await Task.CompletedTask;
+        public async Task DeleteUserAsync(Guid id) => await Task.CompletedTask;
+        public async Task AddCategoryAsync(ITransactionCategory category) => await Task.CompletedTask;
+        public async Task UpdateCategoryAsync(ITransactionCategory category) => await Task.CompletedTask;
+        public async Task DeleteCategoryAsync(int id) => await Task.CompletedTask;
+        public async Task<List<IEvent>> GetEventsAsync() => await Task.FromResult(new List<IEvent>());
+        public async Task<List<IEvent>> GetEventsByUserAsync(Guid userId) => await Task.FromResult(new List<IEvent>());
+        public async Task AddEventAsync(IEvent e) => await Task.CompletedTask;
     }
 }

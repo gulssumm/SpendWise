@@ -6,26 +6,17 @@ namespace LogicTest
 {
     public static class TestDataGenerator
     {
-        // Return abstract types from Data layer 
-        public static User GenerateTestUser()
-        {
-            return new TestUser(Guid.NewGuid(), "Test User");
-        }
+        public static User GenerateTestUser() =>
+            new TestUser(Guid.NewGuid(), "Test User");
 
-        public static TransactionCategory GenerateTestTransactionCategory()
-        {
-            return new TestTransactionCategory("Test Category", "Sample category");
-        }
+        public static TransactionCategory GenerateTestTransactionCategory() =>
+            new TestTransactionCategory("Test Category", "Sample category");
 
-        public static FinancialTransaction GenerateTransaction(string description, decimal amount, bool isExpense, string category, DateTime? date = null)
-        {
-            return new TestFinancialTransaction(description, amount, isExpense, category, date ?? DateTime.Now);
-        }
+        public static FinancialTransaction GenerateTransaction(string description, decimal amount, bool isExpense, string category, DateTime? date = null) =>
+            new TestFinancialTransaction(description, amount, isExpense, category, date ?? DateTime.Now);
 
-        public static Event GenerateTestEvent()
-        {
-            return new TestUserEvent(Guid.NewGuid(), "Test Event");
-        }
+        public static Event GenerateTestEvent() =>
+            new TestUserEvent(Guid.NewGuid(), "Test Event");
 
         public static List<FinancialTransaction> GenerateMultipleTransactions(int count)
         {
@@ -43,8 +34,8 @@ namespace LogicTest
             return list;
         }
 
-        // Test implementations
-        public class TestUser : User
+        // Internal test classes
+        private class TestUser : User
         {
             public TestUser(Guid id, string name)
             {
@@ -53,27 +44,22 @@ namespace LogicTest
             }
         }
 
-        public class TestTransactionCategory : TransactionCategory
+        private class TestTransactionCategory : TransactionCategory
         {
-            public TestTransactionCategory(string name, string description) : base(name, description)
-            {
-            }
+            public TestTransactionCategory(string name, string description)
+                : base(name, description) { }
         }
 
-        public class TestFinancialTransaction : FinancialTransaction
+        private class TestFinancialTransaction : FinancialTransaction
         {
             public TestFinancialTransaction(string description, decimal amount, bool isExpense, string category, DateTime date)
-                : base(description, amount, isExpense, category, date)
-            {
-            }
+                : base(description, amount, isExpense, category, date) { }
         }
 
-        public class TestUserEvent : UserEvent
+        private class TestUserEvent : UserEvent
         {
             public TestUserEvent(Guid userId, string description)
-                : base(userId, description)
-            {
-            }
+                : base(userId, description) { }
         }
     }
 }

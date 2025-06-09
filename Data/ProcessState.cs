@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Data
 {
@@ -12,7 +8,6 @@ namespace Data
         public decimal TotalIncome { get; set; }
         public decimal TotalExpenses { get; set; }
 
-        public List<FinancialTransaction> Transactions { get; set; } = new();
+        public List<FinancialTransaction> Transactions { get; set; } = new List<FinancialTransaction>();
     }
 }
-

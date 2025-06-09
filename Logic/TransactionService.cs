@@ -8,222 +8,195 @@ namespace Logic
 {
     public class TransactionService : ITransactionService
     {
-        private readonly ITransactionRepository _transactionRepository;
+        private readonly ITransactionRepository _repository;
 
-        public TransactionService(ITransactionRepository transactionRepository)
+        public TransactionService(ITransactionRepository repository)
         {
-            _transactionRepository = transactionRepository;
+            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
-        public TransactionService()
+        public async Task<List<IFinancialTransaction>> GetTransactionsAsync()
         {
-            _transactionRepository = new TransactionRepository();
+            return await Task.Run(() => _repository.GetTransactions());
         }
 
-        // Async CRUD Operations
-        public async Task AddTransactionAsync(string description, decimal amount, bool isExpense, TransactionCategory category, User user)
+        public async Task<List<IFinancialTransaction>> GetTransactionsByUserAsync(Guid userId)
         {
-            ValidateTransaction(description, amount, category, user);
-
-            var transaction = new LogicFinancialTransaction(description, amount, isExpense, category.Name, DateTime.Now);
-            var transactionEvent = new LogicUserEvent(user.Id,
-                $"User {user.Name} added transaction: {description}, Amount: {amount}, Category: {category.Name}");
-
-            await _transactionRepository.AddTransactionAsync(transaction);
-            await _transactionRepository.AddEventAsync(transactionEvent);
+            return await Task.Run(() => _repository.GetTransactionsByUser(userId));
         }
 
-        public async Task<List<FinancialTransaction>> GetTransactionsAsync()
+        public async Task<List<IFinancialTransaction>> GetTransactionsByCategory(string category)
         {
-            return await _transactionRepository.GetTransactionsAsync();
+            if (string.IsNullOrWhiteSpace(category))
+                throw new ArgumentException("Category cannot be null or empty", nameof(category));
+
+            return await Task.Run(() => _repository.GetTransactionsByCategory(category));
         }
 
-        public async Task UpdateTransactionAsync(int id, string description, decimal amount, bool isExpense, string category)
+        public async Task<List<IFinancialTransaction>> GetTransactionsByDateRangeAsync(DateTime startDate, DateTime endDate)
         {
-            var existingTransaction = await _transactionRepository.GetTransactionByIdAsync(id);
-            if (existingTransaction != null)
-            {
-                var updatedTransaction = new LogicFinancialTransaction(description, amount, isExpense, category, existingTransaction.Date)
-                {
-                    Id = id
-                };
-                await _transactionRepository.UpdateTransactionAsync(updatedTransaction);
-            }
+            if (startDate > endDate)
+                throw new ArgumentException("Start date cannot be later than end date");
+
+            return await Task.Run(() => _repository.GetTransactionsByDateRange(startDate, endDate));
+        }
+
+        public async Task AddTransactionAsync(IFinancialTransaction transaction)
+        {
+            if (transaction == null)
+                throw new ArgumentNullException(nameof(transaction));
+
+            ValidateTransaction(transaction);
+            await Task.Run(() => _repository.AddTransaction(transaction));
+        }
+
+        public async Task UpdateTransactionAsync(IFinancialTransaction transaction)
+        {
+            if (transaction == null)
+                throw new ArgumentNullException(nameof(transaction));
+
+            ValidateTransaction(transaction);
+            await Task.Run(() => _repository.UpdateTransaction(transaction));
         }
 
         public async Task DeleteTransactionAsync(int id)
         {
-            await _transactionRepository.DeleteTransactionAsync(id);
+            if (id <= 0)
+                throw new ArgumentException("Transaction ID must be positive", nameof(id));
+
+            await Task.Run(() => _repository.DeleteTransaction(id));
         }
 
-        public async Task<decimal> GetBalanceAsync()
+        public async Task<decimal> CalculateBalanceAsync()
         {
-            var transactions = await _transactionRepository.GetTransactionsAsync();
-            decimal income = transactions.Where(t => !t.IsExpense).Sum(t => t.Amount);
-            decimal expense = transactions.Where(t => t.IsExpense).Sum(t => t.Amount);
-            return income - expense;
+            var transactions = await GetTransactionsAsync();
+            return transactions.Sum(t => t.IsExpense ? -t.Amount : t.Amount);
         }
 
-        public async Task<ProcessState?> GetProcessStateAsync()
+        public async Task<decimal> CalculateBalanceByUserAsync(Guid userId)
         {
-            var transactions = await _transactionRepository.GetTransactionsAsync();
-            var state = new LogicTransactionProcessState();
-
-            foreach (var t in transactions)
-            {
-                if (t.IsExpense)
-                    state.TotalExpenses += t.Amount;
-                else
-                    state.TotalIncome += t.Amount;
-
-                state.Transactions.Add(t);
-            }
-
-            state.CurrentBalance = state.TotalIncome - state.TotalExpenses;
-            return state;
+            var transactions = await GetTransactionsByUserAsync(userId);
+            return transactions.Sum(t => t.IsExpense ? -t.Amount : t.Amount);
         }
 
-        public async Task SaveTransactionsAsync()
+        public async Task<Dictionary<string, decimal>> GetExpensesByCategoryAsync()
         {
-            var transactions = await _transactionRepository.GetTransactionsAsync();
-            await _transactionRepository.SaveTransactionsAsync(transactions);
-        }
-
-        public async Task LoadTransactionsAsync()
-        {
-            var loadedTransactions = await _transactionRepository.LoadTransactionsAsync();
-            foreach (var transaction in loadedTransactions)
-            {
-                await _transactionRepository.AddTransactionAsync(transaction);
-            }
-        }
-
-        public async Task<List<FinancialTransaction>> GetMonthlyReportAsync(int month, int year)
-        {
-            var transactions = await _transactionRepository.GetTransactionsAsync();
+            var transactions = await GetTransactionsAsync();
             return transactions
-                .Where(t => t.Date.Month == month && t.Date.Year == year)
+                .Where(t => t.IsExpense)
+                .GroupBy(t => t.Category)
+                .ToDictionary(g => g.Key, g => g.Sum(t => t.Amount));
+        }
+
+        public async Task<List<IFinancialTransaction>> GetRecentTransactionsAsync(int count = 10)
+        {
+            var transactions = await GetTransactionsAsync();
+            return transactions
+                .OrderByDescending(t => t.Date)
+                .Take(count)
                 .ToList();
         }
 
-        // Synchronous versions for compatibility
-        public void AddTransaction(string description, decimal amount, bool isExpense, TransactionCategory category, User user)
+        public async Task<List<IUser>> GetUsersAsync()
         {
-            ValidateTransaction(description, amount, category, user);
-
-            var transaction = new LogicFinancialTransaction(description, amount, isExpense, category.Name, DateTime.Now);
-            var transactionEvent = new LogicUserEvent(user.Id,
-                $"User {user.Name} added transaction: {description}, Amount: {amount}, Category: {category.Name}");
-
-            _transactionRepository.AddTransaction(transaction);
-            _transactionRepository.AddEvent(transactionEvent);
+            return await Task.Run(() => _repository.GetUsers());
         }
 
-        public List<FinancialTransaction> GetTransactions()
+        public async Task<IUser> GetUserAsync(Guid id)
         {
-            return _transactionRepository.GetTransactions();
+            return await Task.Run(() => _repository.GetUser(id));
         }
 
-        public ProcessState? GetProcessState()
+        public async Task AddUserAsync(IUser user)
         {
-            var transactions = _transactionRepository.GetTransactions();
-            var state = new LogicTransactionProcessState();
-
-            foreach (var t in transactions)
-            {
-                if (t.IsExpense)
-                    state.TotalExpenses += t.Amount;
-                else
-                    state.TotalIncome += t.Amount;
-
-                state.Transactions.Add(t);
-            }
-
-            state.CurrentBalance = state.TotalIncome - state.TotalExpenses;
-            return state;
-        }
-
-        public void SaveTransactions()
-        {
-            var transactions = _transactionRepository.GetTransactions();
-            _transactionRepository.SaveTransactions(transactions);
-        }
-
-        public void LoadTransactions()
-        {
-            var loadedTransactions = _transactionRepository.LoadTransactions();
-            foreach (var transaction in loadedTransactions)
-            {
-                _transactionRepository.AddTransaction(transaction);
-            }
-        }
-
-        public List<FinancialTransaction> GetMonthlyReport(int month, int year)
-        {
-            return _transactionRepository
-                .GetTransactions()
-                .Where(t => t.Date.Month == month && t.Date.Year == year)
-                .ToList();
-        }
-
-        public decimal GetBalance()
-        {
-            var transactions = _transactionRepository.GetTransactions();
-            decimal income = transactions.Where(t => !t.IsExpense).Sum(t => t.Amount);
-            decimal expense = transactions.Where(t => t.IsExpense).Sum(t => t.Amount);
-            return income - expense;
-        }
-
-        private static void ValidateTransaction(string description, decimal amount, TransactionCategory? category, User? user)
-        {
-            if (string.IsNullOrWhiteSpace(description))
-                throw new ArgumentException("Description cannot be empty.", nameof(description));
-
-            if (category == null)
-                throw new ArgumentNullException(nameof(category), "Category cannot be null.");
-
             if (user == null)
-                throw new ArgumentNullException(nameof(user), "User cannot be null.");
+                throw new ArgumentNullException(nameof(user));
 
-            if (amount <= 0)
-                throw new ArgumentOutOfRangeException(nameof(amount), "Amount must be greater than zero.");
+            if (string.IsNullOrWhiteSpace(user.Name))
+                throw new ArgumentException("User name cannot be null or empty");
+
+            await Task.Run(() => _repository.AddUser(user));
         }
 
-        // Logic layer implementations
-        private class LogicFinancialTransaction : FinancialTransaction
+        public async Task UpdateUserAsync(IUser user)
         {
-            public LogicFinancialTransaction() : base()
-            {
-            }
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
 
-            public LogicFinancialTransaction(string description, decimal amount, bool isExpense, string category, DateTime date)
-                : base(description, amount, isExpense, category, date)
-            {
-            }
+            if (string.IsNullOrWhiteSpace(user.Name))
+                throw new ArgumentException("User name cannot be null or empty");
+
+            await Task.Run(() => _repository.UpdateUser(user));
         }
 
-        private class LogicUserEvent : UserEvent
+        public async Task DeleteUserAsync(Guid id)
         {
-            public LogicUserEvent() : base()
-            {
-            }
-
-            public LogicUserEvent(Guid userId, string description)
-                : base(userId, description)
-            {
-            }
+            await Task.Run(() => _repository.DeleteUser(id));
         }
 
-        private class LogicTransactionProcessState : TransactionProcessState
+        public async Task<List<ITransactionCategory>> GetCategoriesAsync()
         {
-            private readonly List<FinancialTransaction> _transactions = new();
+            return await Task.Run(() => _repository.GetCategories());
+        }
 
-            public override IList<FinancialTransaction> Transactions => _transactions;
+        public async Task AddCategoryAsync(ITransactionCategory category)
+        {
+            if (category == null)
+                throw new ArgumentNullException(nameof(category));
 
-            public override decimal CalculateBalance()
-            {
-                return _transactions.Sum(t => t.IsExpense ? -t.Amount : t.Amount);
-            }
+            if (string.IsNullOrWhiteSpace(category.Name))
+                throw new ArgumentException("Category name cannot be null or empty");
+
+            await Task.Run(() => _repository.AddCategory(category));
+        }
+
+        public async Task UpdateCategoryAsync(ITransactionCategory category)
+        {
+            if (category == null)
+                throw new ArgumentNullException(nameof(category));
+
+            if (string.IsNullOrWhiteSpace(category.Name))
+                throw new ArgumentException("Category name cannot be null or empty");
+
+            await Task.Run(() => _repository.UpdateCategory(category));
+        }
+
+        public async Task DeleteCategoryAsync(int id)
+        {
+            if (id <= 0)
+                throw new ArgumentException("Category ID must be positive", nameof(id));
+
+            await Task.Run(() => _repository.DeleteCategory(id));
+        }
+
+        public async Task<List<IEvent>> GetEventsAsync()
+        {
+            return await Task.Run(() => _repository.GetEvents());
+        }
+
+        public async Task<List<IEvent>> GetEventsByUserAsync(Guid userId)
+        {
+            return await Task.Run(() => _repository.GetEventsByUser(userId));
+        }
+
+        public async Task AddEventAsync(IEvent e)
+        {
+            if (e == null)
+                throw new ArgumentNullException(nameof(e));
+
+            await Task.Run(() => _repository.AddEvent(e));
+        }
+
+        private static void ValidateTransaction(IFinancialTransaction transaction)
+        {
+            if (string.IsNullOrWhiteSpace(transaction.Description))
+                throw new ArgumentException("Transaction description cannot be null or empty");
+
+            if (transaction.Amount <= 0)
+                throw new ArgumentException("Transaction amount must be positive");
+
+            if (string.IsNullOrWhiteSpace(transaction.Category))
+                throw new ArgumentException("Transaction category cannot be null or empty");
         }
     }
 }
