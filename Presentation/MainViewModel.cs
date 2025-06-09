@@ -24,17 +24,15 @@ namespace Presentation
         {
             _transactionService = transactionService ?? throw new ArgumentNullException(nameof(transactionService));
 
-            // Initialize collections using interface types
+            // Collections using interface types
             Transactions = new ObservableCollection<IFinancialTransaction>();
             Users = new ObservableCollection<IUser>();
             Categories = new ObservableCollection<ITransactionCategory>();
 
-            // Initialize commands
             AddTransactionCommand = new RelayCommand(async () => await AddTransactionAsync(), CanAddTransaction);
             DeleteTransactionCommand = new RelayCommand(async () => await DeleteTransactionAsync(), () => SelectedTransaction != null);
             LoadDataCommand = new RelayCommand(async () => await LoadDataAsync());
 
-            // Load initial data
             _ = LoadDataAsync();
         }
 
@@ -43,7 +41,6 @@ namespace Presentation
         public ObservableCollection<IUser> Users { get; }
         public ObservableCollection<ITransactionCategory> Categories { get; }
 
-        // Selected transaction for detail view
         public IFinancialTransaction SelectedTransaction
         {
             get => _selectedTransaction;
@@ -55,7 +52,6 @@ namespace Presentation
             }
         }
 
-        // Properties for adding new transactions
         public string NewDescription
         {
             get => _newDescription;
@@ -109,12 +105,10 @@ namespace Presentation
             }
         }
 
-        // Commands
         public ICommand AddTransactionCommand { get; }
         public ICommand DeleteTransactionCommand { get; }
         public ICommand LoadDataCommand { get; }
 
-        // Calculated properties
         public decimal TotalBalance => Transactions?.Sum(t => t.IsExpense ? -t.Amount : t.Amount) ?? 0;
         public decimal TotalExpenses => Transactions?.Where(t => t.IsExpense).Sum(t => t.Amount) ?? 0;
         public decimal TotalIncome => Transactions?.Where(t => !t.IsExpense).Sum(t => t.Amount) ?? 0;
@@ -132,7 +126,6 @@ namespace Presentation
                     Transactions.Add(transaction);
                 }
 
-                // Load users
                 var users = await _transactionService.GetUsersAsync();
                 Users.Clear();
                 foreach (var user in users)
@@ -140,7 +133,6 @@ namespace Presentation
                     Users.Add(user);
                 }
 
-                // Load categories
                 var categories = await _transactionService.GetCategoriesAsync();
                 Categories.Clear();
                 foreach (var category in categories)
@@ -167,13 +159,10 @@ namespace Presentation
 
                 await _transactionService.AddTransactionAsync(newTransaction);
 
-                // Add to collection
                 Transactions.Add(newTransaction);
 
-                // Clear form
                 ClearForm();
 
-                // Update calculated properties
                 OnPropertyChanged(nameof(TotalBalance));
                 OnPropertyChanged(nameof(TotalExpenses));
                 OnPropertyChanged(nameof(TotalIncome));

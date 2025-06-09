@@ -18,7 +18,7 @@ namespace PresentationTest
         [TestInitialize]
         public void TestInitialize()
         {
-            // Dependency injection for testing - using mock service
+            // Dependency injection for testing
             _mockService = new PresentationTestMockService();
             _viewModel = new MainViewModel(_mockService);
         }
@@ -29,7 +29,6 @@ namespace PresentationTest
             // Wait a moment for async initialization
             await Task.Delay(100);
 
-            // Assert
             Assert.IsTrue(_viewModel.Transactions.Count > 0, "Should load transactions on initialization");
             Assert.IsTrue(_viewModel.Users.Count > 0, "Should load users on initialization");
             Assert.IsTrue(_viewModel.Categories.Count > 0, "Should load categories on initialization");
@@ -38,12 +37,11 @@ namespace PresentationTest
         [TestMethod]
         public void ViewModel_CalculatesBalanceCorrectly()
         {
-            // Arrange - Add test data
+            // Add test data
             _viewModel.Transactions.Clear();
             _viewModel.Transactions.Add(new FinancialTransaction("Income", 1000m, false, "Salary", DateTime.Today));
             _viewModel.Transactions.Add(new FinancialTransaction("Expense", 300m, true, "Food", DateTime.Today));
 
-            // Assert
             Assert.AreEqual(700m, _viewModel.TotalBalance);
             Assert.AreEqual(300m, _viewModel.TotalExpenses);
             Assert.AreEqual(1000m, _viewModel.TotalIncome);
@@ -66,33 +64,30 @@ namespace PresentationTest
         [TestMethod]
         public void ViewModel_AddTransactionCommand_CanExecuteValidation()
         {
-            // Arrange - Invalid data
+            // Invalid data
             _viewModel.NewDescription = "";
             _viewModel.NewAmount = 0;
             _viewModel.NewCategory = "";
 
-            // Assert
             Assert.IsFalse(_viewModel.AddTransactionCommand.CanExecute(null));
 
-            // Arrange - Valid data
+            // Valid data
             _viewModel.NewDescription = "Test";
             _viewModel.NewAmount = 100;
             _viewModel.NewCategory = "Test";
 
-            // Assert
             Assert.IsTrue(_viewModel.AddTransactionCommand.CanExecute(null));
         }
 
         [TestMethod]
         public void ViewModel_DeleteTransactionCommand_CanExecuteValidation()
         {
-            // Assert - No selection
+            // No selection
             Assert.IsFalse(_viewModel.DeleteTransactionCommand.CanExecute(null));
 
-            // Arrange - With selection
+            // With selection
             _viewModel.SelectedTransaction = new FinancialTransaction("Test", 100m, true, "Test", DateTime.Today);
 
-            // Assert
             Assert.IsTrue(_viewModel.DeleteTransactionCommand.CanExecute(null));
         }
 
@@ -105,7 +100,7 @@ namespace PresentationTest
             // Wait for async operation to complete
             await Task.Delay(100);
 
-            // Assert - Verify
+            // Verify
             Assert.IsTrue(_mockService.GetTransactionsAsyncCalled, "Should call abstract service API");
             Assert.IsTrue(_mockService.GetUsersAsyncCalled, "Should call abstract service API");
             Assert.IsTrue(_mockService.GetCategoriesAsyncCalled, "Should call abstract service API");
@@ -129,7 +124,7 @@ namespace PresentationTest
         }
     }
 
-    // Mock service for Presentation layer testing - demonstrates independence
+    // Mock service for Presentation layer testing 
     public class PresentationTestMockService : ITransactionService
     {
         private readonly List<IFinancialTransaction> _transactions = new List<IFinancialTransaction>();
@@ -184,7 +179,7 @@ namespace PresentationTest
             await Task.CompletedTask;
         }
 
-        // Other required interface methods (simplified for testing)
+        // Other required interface methods
         public async Task<List<IFinancialTransaction>> GetTransactionsByUserAsync(Guid userId) => await Task.FromResult(new List<IFinancialTransaction>());
         public async Task<List<IFinancialTransaction>> GetTransactionsByCategory(string category) => await Task.FromResult(new List<IFinancialTransaction>());
         public async Task<List<IFinancialTransaction>> GetTransactionsByDateRangeAsync(DateTime startDate, DateTime endDate) => await Task.FromResult(new List<IFinancialTransaction>());

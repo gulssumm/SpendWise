@@ -74,7 +74,7 @@ namespace DataTest
         [TestMethod]
         public void TestDataGenerationMethod1_MockRepository_GeneratesValidData()
         {
-            // Data Generation Method 1: MockTransactionRepository (built-in test data)
+            // Data Generation Method 1
             var mockRepo = new MockTransactionRepository();
             var transactions = mockRepo.GetTransactions();
             var users = mockRepo.GetUsers();
@@ -90,7 +90,7 @@ namespace DataTest
         [TestMethod]
         public void TestDataGenerationMethod2_TestDataGenerator_GeneratesValidData()
         {
-            // Data Generation Method 2: TestDataGenerator (random test data)
+            // Data Generation Method 2
             var generatedTransactions = TestDataGenerator.GenerateRandomTransactions(5);
             var generatedUsers = TestDataGenerator.GenerateTestUsers(3);
             var generatedCategories = TestDataGenerator.GenerateTestCategories();

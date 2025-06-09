@@ -70,7 +70,7 @@ namespace LogicTest
         [TestMethod]
         public async Task LogicLayer_TestDataGenerationMethod1_PreDefinedData()
         {
-            // Generation Method 1: Pre-defined test data in constructor
+            // Generation Method 1
             var service = new TransactionService(new LogicTestMockRepository());
             var transactions = await service.GetTransactionsAsync();
 
@@ -82,7 +82,7 @@ namespace LogicTest
         [TestMethod]
         public async Task LogicLayer_TestDataGenerationMethod2_DynamicData()
         {
-            // Generation Method 2: Dynamic test data generation
+            // Generation Method 2
             var dynamicRepo = new LogicTestMockRepository();
 
             // Add dynamically generated transactions
@@ -149,13 +149,13 @@ namespace LogicTest
         {
             // Arrange
             var transactions = await _service.GetTransactionsAsync();
-            var userId = transactions.First().UserId ?? Guid.Empty; // Handle nullable Guid
+            var userId = transactions.First().UserId ?? Guid.Empty; 
 
             // Act
             var balance = await _service.CalculateBalanceByUserAsync(userId);
 
             // Assert
-            Assert.IsTrue(balance != 0); // Should have some balance for the user
+            Assert.IsTrue(balance != 0); 
         }
 
         [TestMethod]
@@ -189,7 +189,7 @@ namespace LogicTest
         }
     }
 
-    // Local mock repository for LogicTest - demonstrates independence from DataTest
+    // Local mock repository for LogicTest
     public class LogicTestMockRepository : ITransactionRepository
     {
         private readonly List<FinancialTransaction> _transactions = new List<FinancialTransaction>();
@@ -200,7 +200,7 @@ namespace LogicTest
 
         public LogicTestMockRepository()
         {
-            // Generation Method 1: Pre-defined test data
+            // Generation Method 1
             var user1 = new User { Id = Guid.NewGuid(), Name = "Logic Test User" };
             _users.Add(user1);
 
@@ -252,7 +252,7 @@ namespace LogicTest
                 new FinancialTransaction(transaction.Description, transaction.Amount, transaction.IsExpense, transaction.Category, transaction.Date)
                 {
                     Id = _nextTransactionId++,
-                    UserId = transaction.UserId ?? Guid.Empty // Handle nullable Guid
+                    UserId = transaction.UserId ?? Guid.Empty 
                 };
 
             if (concreteTransaction.Id == 0)
@@ -271,7 +271,7 @@ namespace LogicTest
                 existing.IsExpense = transaction.IsExpense;
                 existing.Category = transaction.Category;
                 existing.Date = transaction.Date;
-                existing.UserId = transaction.UserId ?? Guid.Empty; // Handle nullable Guid
+                existing.UserId = transaction.UserId ?? Guid.Empty; 
             }
         }
 

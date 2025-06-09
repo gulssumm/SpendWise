@@ -10,7 +10,7 @@
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <TextBlock Grid.Row="0" Text="Financial Transaction Manager" 
+        <TextBlock Grid.Row="0" Text="SPEND WISE - Financial Transaction Manager" 
                    FontSize="20" FontWeight="Bold" 
                    HorizontalAlignment="Center" Margin="10"/>
 
