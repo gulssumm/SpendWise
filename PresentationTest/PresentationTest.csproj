@@ -20,10 +20,4 @@
 		<PackageReference Include="Moq" Version="4.20.69" />
 		<PackageReference Include="Microsoft.VisualBasic" Version="10.3.0" />
 	</ItemGroup>
-	<ItemGroup>
-		<ProjectReference Include="..\Data\Data.csproj" />
-		<ProjectReference Include="..\Logic\Logic.csproj" />
-		<ProjectReference Include="..\Presentation\Presentation.csproj" />
-		<ProjectReference Include="..\DataTest\DataTest.csproj" />
-	</ItemGroup>
 </Project>
