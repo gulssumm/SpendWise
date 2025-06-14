@@ -9,7 +9,13 @@ namespace Data
         [Column(IsPrimaryKey = true)]
         public Guid Id { get; set; }
 
-        [Column]
+        [Column(CanBeNull = false)]
         public string Name { get; set; } = string.Empty;
+
+        // Constructor
+        public User()
+        {
+            Id = Guid.NewGuid();
+        }
     }
 }
