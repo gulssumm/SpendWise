@@ -14,9 +14,10 @@ namespace Data
             _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
         }
 
-        #region Synchronous Transaction Operations
+        #region Virtual Methods for Testing
 
-        public List<IFinancialTransaction> GetTransactions()
+        // All methods virtual for inheritance-based testing
+        public virtual List<IFinancialTransaction> GetTransactions()
         {
             using (var context = new FinancialDataContext(_connectionString))
             {
@@ -28,7 +29,7 @@ namespace Data
             }
         }
 
-        public List<IFinancialTransaction> GetTransactionsByUser(Guid userId)
+        public virtual List<IFinancialTransaction> GetTransactionsByUser(Guid userId)
         {
             using (var context = new FinancialDataContext(_connectionString))
             {
@@ -40,7 +41,7 @@ namespace Data
             }
         }
 
-        public List<IFinancialTransaction> GetTransactionsByCategory(string category)
+        public virtual List<IFinancialTransaction> GetTransactionsByCategory(string category)
         {
             using (var context = new FinancialDataContext(_connectionString))
             {
@@ -52,7 +53,7 @@ namespace Data
             }
         }
 
-        public List<IFinancialTransaction> GetTransactionsByDateRange(DateTime startDate, DateTime endDate)
+        public virtual List<IFinancialTransaction> GetTransactionsByDateRange(DateTime startDate, DateTime endDate)
         {
             using (var context = new FinancialDataContext(_connectionString))
             {
@@ -64,16 +65,16 @@ namespace Data
             }
         }
 
-        public void AddTransaction(IFinancialTransaction transaction)
+        public virtual void AddTransaction(IFinancialTransaction transaction)
         {
-            if (transaction == null) throw new ArgumentNullException(nameof(transaction));
+            if (transaction == null)
+                throw new ArgumentNullException(nameof(transaction));
 
             using (var context = new FinancialDataContext(_connectionString))
             {
                 var concreteTransaction = transaction as FinancialTransaction;
                 if (concreteTransaction == null)
                 {
-                    // Create a new concrete instance from the interface
                     concreteTransaction = new FinancialTransaction(
                         transaction.Description,
                         transaction.Amount,
@@ -86,13 +87,14 @@ namespace Data
                 }
                 context.Transactions.InsertOnSubmit(concreteTransaction);
                 context.SubmitChanges();
-                transaction.Id = concreteTransaction.Id; // Update the interface with generated ID
+                transaction.Id = concreteTransaction.Id;
             }
         }
 
-        public void UpdateTransaction(IFinancialTransaction transaction)
+        public virtual void UpdateTransaction(IFinancialTransaction transaction)
         {
-            if (transaction == null) throw new ArgumentNullException(nameof(transaction));
+            if (transaction == null)
+                throw new ArgumentNullException(nameof(transaction));
 
             using (var context = new FinancialDataContext(_connectionString))
             {
@@ -110,7 +112,7 @@ namespace Data
             }
         }
 
-        public void DeleteTransaction(int id)
+        public virtual void DeleteTransaction(int id)
         {
             using (var context = new FinancialDataContext(_connectionString))
             {
@@ -123,50 +125,7 @@ namespace Data
             }
         }
 
-        #endregion
-
-        #region Asynchronous Transaction Operations
-
-        public async Task<List<IFinancialTransaction>> GetTransactionsAsync()
-        {
-            return await Task.Run(() => GetTransactions());
-        }
-
-        public async Task<List<IFinancialTransaction>> GetTransactionsByUserAsync(Guid userId)
-        {
-            return await Task.Run(() => GetTransactionsByUser(userId));
-        }
-
-        public async Task<List<IFinancialTransaction>> GetTransactionsByCategoryAsync(string category)
-        {
-            return await Task.Run(() => GetTransactionsByCategory(category));
-        }
-
-        public async Task<List<IFinancialTransaction>> GetTransactionsByDateRangeAsync(DateTime startDate, DateTime endDate)
-        {
-            return await Task.Run(() => GetTransactionsByDateRange(startDate, endDate));
-        }
-
-        public async Task AddTransactionAsync(IFinancialTransaction transaction)
-        {
-            await Task.Run(() => AddTransaction(transaction));
-        }
-
-        public async Task UpdateTransactionAsync(IFinancialTransaction transaction)
-        {
-            await Task.Run(() => UpdateTransaction(transaction));
-        }
-
-        public async Task DeleteTransactionAsync(int id)
-        {
-            await Task.Run(() => DeleteTransaction(id));
-        }
-
-        #endregion
-
-        #region User Operations
-
-        public List<IUser> GetUsers()
+        public virtual List<IUser> GetUsers()
         {
             using (var context = new FinancialDataContext(_connectionString))
             {
@@ -175,7 +134,74 @@ namespace Data
             }
         }
 
-        public IUser GetUser(Guid id)
+        public virtual List<ITransactionCategory> GetCategories()
+        {
+            using (var context = new FinancialDataContext(_connectionString))
+            {
+                var categories = from c in context.TransactionCategories
+                                 orderby c.Name
+                                 select c;
+                return categories.Cast<ITransactionCategory>().ToList();
+            }
+        }
+
+        #endregion
+
+        #region Async Methods (Fixed)
+
+        public virtual async Task<List<IFinancialTransaction>> GetTransactionsAsync()
+        {
+            return await Task.FromResult(GetTransactions());
+        }
+
+        public virtual async Task<List<IFinancialTransaction>> GetTransactionsByUserAsync(Guid userId)
+        {
+            return await Task.FromResult(GetTransactionsByUser(userId));
+        }
+
+        public virtual async Task<List<IFinancialTransaction>> GetTransactionsByCategoryAsync(string category)
+        {
+            return await Task.FromResult(GetTransactionsByCategory(category));
+        }
+
+        public virtual async Task<List<IFinancialTransaction>> GetTransactionsByDateRangeAsync(DateTime startDate, DateTime endDate)
+        {
+            return await Task.FromResult(GetTransactionsByDateRange(startDate, endDate));
+        }
+
+        public virtual async Task AddTransactionAsync(IFinancialTransaction transaction)
+        {
+            AddTransaction(transaction);
+            await Task.CompletedTask;
+        }
+
+        public virtual async Task UpdateTransactionAsync(IFinancialTransaction transaction)
+        {
+            UpdateTransaction(transaction);
+            await Task.CompletedTask;
+        }
+
+        public virtual async Task DeleteTransactionAsync(int id)
+        {
+            DeleteTransaction(id);
+            await Task.CompletedTask;
+        }
+
+        public virtual async Task<List<IUser>> GetUsersAsync()
+        {
+            return await Task.FromResult(GetUsers());
+        }
+
+        public virtual async Task<List<ITransactionCategory>> GetCategoriesAsync()
+        {
+            return await Task.FromResult(GetCategories());
+        }
+
+        #endregion
+
+        #region User Operations
+
+        public virtual IUser GetUser(Guid id)
         {
             using (var context = new FinancialDataContext(_connectionString))
             {
@@ -183,9 +209,11 @@ namespace Data
             }
         }
 
-        public void AddUser(IUser user)
+        public virtual void AddUser(IUser user)
         {
-            if (user == null) throw new ArgumentNullException(nameof(user));
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
             using (var context = new FinancialDataContext(_connectionString))
             {
                 var concreteUser = user as User ?? new User { Id = user.Id, Name = user.Name };
@@ -194,9 +222,11 @@ namespace Data
             }
         }
 
-        public void UpdateUser(IUser user)
+        public virtual void UpdateUser(IUser user)
         {
-            if (user == null) throw new ArgumentNullException(nameof(user));
+            if (user == null)
+                throw new ArgumentNullException(nameof(user));
+
             using (var context = new FinancialDataContext(_connectionString))
             {
                 var existing = context.Users.FirstOrDefault(u => u.Id == user.Id);
@@ -208,7 +238,7 @@ namespace Data
             }
         }
 
-        public void DeleteUser(Guid id)
+        public virtual void DeleteUser(Guid id)
         {
             using (var context = new FinancialDataContext(_connectionString))
             {
@@ -221,18 +251,34 @@ namespace Data
             }
         }
 
-        // Async versions for WPF
-        public async Task<List<IUser>> GetUsersAsync() => await Task.Run(() => GetUsers());
-        public async Task<IUser> GetUserAsync(Guid id) => await Task.Run(() => GetUser(id));
-        public async Task AddUserAsync(IUser user) => await Task.Run(() => AddUser(user));
-        public async Task UpdateUserAsync(IUser user) => await Task.Run(() => UpdateUser(user));
-        public async Task DeleteUserAsync(Guid id) => await Task.Run(() => DeleteUser(id));
+        public virtual async Task<IUser> GetUserAsync(Guid id)
+        {
+            return await Task.FromResult(GetUser(id));
+        }
+
+        public virtual async Task AddUserAsync(IUser user)
+        {
+            AddUser(user);
+            await Task.CompletedTask;
+        }
+
+        public virtual async Task UpdateUserAsync(IUser user)
+        {
+            UpdateUser(user);
+            await Task.CompletedTask;
+        }
+
+        public virtual async Task DeleteUserAsync(Guid id)
+        {
+            DeleteUser(id);
+            await Task.CompletedTask;
+        }
 
         #endregion
 
         #region Event Operations
 
-        public List<IEvent> GetEvents()
+        public virtual List<IEvent> GetEvents()
         {
             using (var context = new FinancialDataContext(_connectionString))
             {
@@ -244,7 +290,7 @@ namespace Data
             }
         }
 
-        public List<IEvent> GetEventsByUser(Guid userId)
+        public virtual List<IEvent> GetEventsByUser(Guid userId)
         {
             using (var context = new FinancialDataContext(_connectionString))
             {
@@ -256,9 +302,11 @@ namespace Data
             }
         }
 
-        public void AddEvent(IEvent e)
+        public virtual void AddEvent(IEvent e)
         {
-            if (e == null) throw new ArgumentNullException(nameof(e));
+            if (e == null)
+                throw new ArgumentNullException(nameof(e));
+
             using (var context = new FinancialDataContext(_connectionString))
             {
                 var concreteEvent = e as Event ?? new Event
@@ -273,29 +321,31 @@ namespace Data
             }
         }
 
-        // Async versions for WPF
-        public async Task<List<IEvent>> GetEventsAsync() => await Task.Run(() => GetEvents());
-        public async Task<List<IEvent>> GetEventsByUserAsync(Guid userId) => await Task.Run(() => GetEventsByUser(userId));
-        public async Task AddEventAsync(IEvent e) => await Task.Run(() => AddEvent(e));
+        public virtual async Task<List<IEvent>> GetEventsAsync()
+        {
+            return await Task.FromResult(GetEvents());
+        }
+
+        public virtual async Task<List<IEvent>> GetEventsByUserAsync(Guid userId)
+        {
+            return await Task.FromResult(GetEventsByUser(userId));
+        }
+
+        public virtual async Task AddEventAsync(IEvent e)
+        {
+            AddEvent(e);
+            await Task.CompletedTask;
+        }
 
         #endregion
 
         #region Category Operations
 
-        public List<ITransactionCategory> GetCategories()
+        public virtual void AddCategory(ITransactionCategory category)
         {
-            using (var context = new FinancialDataContext(_connectionString))
-            {
-                var categories = from c in context.TransactionCategories
-                                 orderby c.Name
-                                 select c;
-                return categories.Cast<ITransactionCategory>().ToList();
-            }
-        }
+            if (category == null)
+                throw new ArgumentNullException(nameof(category));
 
-        public void AddCategory(ITransactionCategory category)
-        {
-            if (category == null) throw new ArgumentNullException(nameof(category));
             using (var context = new FinancialDataContext(_connectionString))
             {
                 var concreteCategory = category as TransactionCategory ??
@@ -306,9 +356,11 @@ namespace Data
             }
         }
 
-        public void UpdateCategory(ITransactionCategory category)
+        public virtual void UpdateCategory(ITransactionCategory category)
         {
-            if (category == null) throw new ArgumentNullException(nameof(category));
+            if (category == null)
+                throw new ArgumentNullException(nameof(category));
+
             using (var context = new FinancialDataContext(_connectionString))
             {
                 var existing = context.TransactionCategories.FirstOrDefault(c => c.Id == category.Id);
@@ -321,7 +373,7 @@ namespace Data
             }
         }
 
-        public void DeleteCategory(int id)
+        public virtual void DeleteCategory(int id)
         {
             using (var context = new FinancialDataContext(_connectionString))
             {
@@ -334,59 +386,22 @@ namespace Data
             }
         }
 
-        // Async versions for WPF
-        public async Task<List<ITransactionCategory>> GetCategoriesAsync() => await Task.Run(() => GetCategories());
-        public async Task AddCategoryAsync(ITransactionCategory category) => await Task.Run(() => AddCategory(category));
-        public async Task UpdateCategoryAsync(ITransactionCategory category) => await Task.Run(() => UpdateCategory(category));
-        public async Task DeleteCategoryAsync(int id) => await Task.Run(() => DeleteCategory(id));
-
-        #endregion
-
-        #region Additional LINQ Examples (Method and Query Syntax)
-
-        // Query syntax example
-        public List<IFinancialTransaction> GetTopExpensesByCategory(string category, int top)
+        public virtual async Task AddCategoryAsync(ITransactionCategory category)
         {
-            using (var context = new FinancialDataContext(_connectionString))
-            {
-                var query = from t in context.Transactions
-                            where t.IsExpense && t.Category == category
-                            orderby t.Amount descending
-                            select t;
-
-                return query.Take(top).Cast<IFinancialTransaction>().ToList();
-            }
+            AddCategory(category);
+            await Task.CompletedTask;
         }
 
-        // Method syntax example
-        public decimal GetAverageTransactionAmount(bool isExpense)
+        public virtual async Task UpdateCategoryAsync(ITransactionCategory category)
         {
-            using (var context = new FinancialDataContext(_connectionString))
-            {
-                return context.Transactions
-                    .Where(t => t.IsExpense == isExpense)
-                    .Select(t => t.Amount)
-                    .DefaultIfEmpty(0)
-                    .Average();
-            }
+            UpdateCategory(category);
+            await Task.CompletedTask;
         }
 
-        // Combined query and method syntax
-        public Dictionary<string, decimal> GetMonthlyTotals(int year)
+        public virtual async Task DeleteCategoryAsync(int id)
         {
-            using (var context = new FinancialDataContext(_connectionString))
-            {
-                var query = from t in context.Transactions
-                            where t.Date.Year == year
-                            group t by t.Date.Month into g
-                            select new
-                            {
-                                Month = g.Key,
-                                Total = g.Sum(x => x.IsExpense ? -x.Amount : x.Amount)
-                            };
-
-                return query.ToDictionary(x => $"{year}-{x.Month:00}", x => x.Total);
-            }
+            DeleteCategory(id);
+            await Task.CompletedTask;
         }
 
         #endregion

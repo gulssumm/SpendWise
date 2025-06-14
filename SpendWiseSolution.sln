@@ -14,10 +14,16 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PresentationTest", "PresentationTest\PresentationTest.csproj", "{EF4C18D5-1200-4138-B217-CC96DC0922A5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Presentation.View", "Presentation.View\Presentation.View.csproj", "{3DBA133D-3E2A-4EF6-9577-1CADC36AF676}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AE8E2E54-CA0B-F6F5-0102-F79722AD1421} = {AE8E2E54-CA0B-F6F5-0102-F79722AD1421}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Presentation.Model", "Presentation.Model\Presentation.Model.csproj", "{12FF1903-E246-4BE8-9F8C-BC45617B7B92}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Presentation.ViewModel", "Presentation.ViewModel\Presentation.ViewModel.csproj", "{1F1D13A9-72B3-4406-AD8D-35EB35539C6A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AE8E2E54-CA0B-F6F5-0102-F79722AD1421} = {AE8E2E54-CA0B-F6F5-0102-F79722AD1421}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

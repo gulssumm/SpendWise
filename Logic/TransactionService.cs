@@ -17,12 +17,12 @@ namespace Logic
 
         public async Task<List<IFinancialTransaction>> GetTransactionsAsync()
         {
-            return await Task.Run(() => _repository.GetTransactions());
+            return await _repository.GetTransactionsAsync();
         }
 
         public async Task<List<IFinancialTransaction>> GetTransactionsByUserAsync(Guid userId)
         {
-            return await Task.Run(() => _repository.GetTransactionsByUser(userId));
+            return await _repository.GetTransactionsByUserAsync(userId);
         }
 
         public async Task<List<IFinancialTransaction>> GetTransactionsByCategory(string category)
@@ -30,7 +30,7 @@ namespace Logic
             if (string.IsNullOrWhiteSpace(category))
                 throw new ArgumentException("Category cannot be null or empty", nameof(category));
 
-            return await Task.Run(() => _repository.GetTransactionsByCategory(category));
+            return await _repository.GetTransactionsByCategoryAsync(category);
         }
 
         public async Task<List<IFinancialTransaction>> GetTransactionsByDateRangeAsync(DateTime startDate, DateTime endDate)
@@ -38,7 +38,7 @@ namespace Logic
             if (startDate > endDate)
                 throw new ArgumentException("Start date cannot be later than end date");
 
-            return await Task.Run(() => _repository.GetTransactionsByDateRange(startDate, endDate));
+            return await _repository.GetTransactionsByDateRangeAsync(startDate, endDate);
         }
 
         public async Task AddTransactionAsync(IFinancialTransaction transaction)
@@ -47,7 +47,7 @@ namespace Logic
                 throw new ArgumentNullException(nameof(transaction));
 
             ValidateTransaction(transaction);
-            await Task.Run(() => _repository.AddTransaction(transaction));
+            await _repository.AddTransactionAsync(transaction);
         }
 
         public async Task UpdateTransactionAsync(IFinancialTransaction transaction)
@@ -56,7 +56,7 @@ namespace Logic
                 throw new ArgumentNullException(nameof(transaction));
 
             ValidateTransaction(transaction);
-            await Task.Run(() => _repository.UpdateTransaction(transaction));
+            await _repository.UpdateTransactionAsync(transaction);
         }
 
         public async Task DeleteTransactionAsync(int id)
@@ -64,7 +64,7 @@ namespace Logic
             if (id <= 0)
                 throw new ArgumentException("Transaction ID must be positive", nameof(id));
 
-            await Task.Run(() => _repository.DeleteTransaction(id));
+            await _repository.DeleteTransactionAsync(id);
         }
 
         public async Task<decimal> CalculateBalanceAsync()
@@ -97,14 +97,15 @@ namespace Logic
                 .ToList();
         }
 
+        // ✅ FIXED: Call async repository method directly
         public async Task<List<IUser>> GetUsersAsync()
         {
-            return await Task.Run(() => _repository.GetUsers());
+            return await _repository.GetUsersAsync();
         }
 
         public async Task<IUser> GetUserAsync(Guid id)
         {
-            return await Task.Run(() => _repository.GetUser(id));
+            return await _repository.GetUserAsync(id);
         }
 
         public async Task AddUserAsync(IUser user)
@@ -115,7 +116,7 @@ namespace Logic
             if (string.IsNullOrWhiteSpace(user.Name))
                 throw new ArgumentException("User name cannot be null or empty");
 
-            await Task.Run(() => _repository.AddUser(user));
+            await _repository.AddUserAsync(user);
         }
 
         public async Task UpdateUserAsync(IUser user)
@@ -126,17 +127,16 @@ namespace Logic
             if (string.IsNullOrWhiteSpace(user.Name))
                 throw new ArgumentException("User name cannot be null or empty");
 
-            await Task.Run(() => _repository.UpdateUser(user));
+            await _repository.UpdateUserAsync(user);
         }
 
         public async Task DeleteUserAsync(Guid id)
         {
-            await Task.Run(() => _repository.DeleteUser(id));
+            await _repository.DeleteUserAsync(id);
         }
-
         public async Task<List<ITransactionCategory>> GetCategoriesAsync()
         {
-            return await Task.Run(() => _repository.GetCategories());
+            return await _repository.GetCategoriesAsync();
         }
 
         public async Task AddCategoryAsync(ITransactionCategory category)
@@ -147,7 +147,7 @@ namespace Logic
             if (string.IsNullOrWhiteSpace(category.Name))
                 throw new ArgumentException("Category name cannot be null or empty");
 
-            await Task.Run(() => _repository.AddCategory(category));
+            await _repository.AddCategoryAsync(category);
         }
 
         public async Task UpdateCategoryAsync(ITransactionCategory category)
@@ -158,7 +158,7 @@ namespace Logic
             if (string.IsNullOrWhiteSpace(category.Name))
                 throw new ArgumentException("Category name cannot be null or empty");
 
-            await Task.Run(() => _repository.UpdateCategory(category));
+            await _repository.UpdateCategoryAsync(category);
         }
 
         public async Task DeleteCategoryAsync(int id)
@@ -166,17 +166,17 @@ namespace Logic
             if (id <= 0)
                 throw new ArgumentException("Category ID must be positive", nameof(id));
 
-            await Task.Run(() => _repository.DeleteCategory(id));
+            await _repository.DeleteCategoryAsync(id);
         }
 
         public async Task<List<IEvent>> GetEventsAsync()
         {
-            return await Task.Run(() => _repository.GetEvents());
+            return await _repository.GetEventsAsync();
         }
 
         public async Task<List<IEvent>> GetEventsByUserAsync(Guid userId)
         {
-            return await Task.Run(() => _repository.GetEventsByUser(userId));
+            return await _repository.GetEventsByUserAsync(userId);
         }
 
         public async Task AddEventAsync(IEvent e)
@@ -184,7 +184,7 @@ namespace Logic
             if (e == null)
                 throw new ArgumentNullException(nameof(e));
 
-            await Task.Run(() => _repository.AddEvent(e));
+            await _repository.AddEventAsync(e);
         }
 
         private static void ValidateTransaction(IFinancialTransaction transaction)

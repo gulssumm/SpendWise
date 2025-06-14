@@ -37,8 +37,18 @@ namespace Presentation.ViewModel
             DeleteTransactionCommand = new RelayCommand(async () => await DeleteTransactionAsync(), () => SelectedTransaction != null);
             LoadDataCommand = new RelayCommand(async () => await LoadDataAsync());
 
-            // Load initial data
-            _ = LoadDataAsync();
+            // Using Task.Run to avoid blocking the constructor while still initiating the load
+            _ = Task.Run(async () =>
+            {
+                try
+                {
+                    await LoadDataAsync();
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error in initial data load: {ex.Message}");
+                }
+            });
         }
 
         // Master-Detail pattern - Collections
@@ -272,6 +282,19 @@ namespace Presentation.ViewModel
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public async Task WaitForInitializationAsync()
+        {
+            // Give some time for the initial load to complete
+            // Tests can call this method to ensure data is loaded
+            await Task.Delay(50);
+
+            // If collections are still empty, try loading again
+            if (!Transactions.Any() && !Users.Any() && !Categories.Any())
+            {
+                await LoadDataAsync();
+            }
         }
     }
 }

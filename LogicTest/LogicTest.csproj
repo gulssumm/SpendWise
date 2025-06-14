@@ -21,6 +21,5 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Data\Data.csproj" />
 		<ProjectReference Include="..\Logic\Logic.csproj" />
-		<ProjectReference Include="..\DataTest\DataTest.csproj" />
 	</ItemGroup>
 </Project>

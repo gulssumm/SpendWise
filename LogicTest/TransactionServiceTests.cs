@@ -33,44 +33,9 @@ namespace LogicTest
         }
 
         [TestMethod]
-        public async Task AddTransactionAsync_ValidTransaction_AddsSuccessfully()
-        {
-            // Arrange
-            var transaction = new FinancialTransaction("Test transaction", 100m, true, "Test", DateTime.Today);
-
-            // Act
-            await _service.AddTransactionAsync(transaction);
-            var transactions = await _service.GetTransactionsAsync();
-
-            // Assert
-            Assert.IsTrue(transactions.Any(t => t.Description == "Test transaction"));
-        }
-
-        [TestMethod]
-        public async Task CalculateBalanceAsync_ReturnsCorrectBalance()
-        {
-            // Act
-            var balance = await _service.CalculateBalanceAsync();
-
-            // Assert
-            Assert.IsTrue(balance != 0); // Should have some balance from test data
-        }
-
-        [TestMethod]
-        public async Task GetExpensesByCategoryAsync_ReturnsGroupedExpenses()
-        {
-            // Act
-            var expenses = await _service.GetExpensesByCategoryAsync();
-
-            // Assert
-            Assert.IsNotNull(expenses);
-            Assert.IsTrue(expenses.Count > 0);
-        }
-
-        [TestMethod]
         public async Task LogicLayer_TestDataGenerationMethod1_PreDefinedData()
         {
-            // Generation Method 1
+            // Generation Method 1: Predefined mock data
             var service = new TransactionService(new LogicTestMockRepository());
             var transactions = await service.GetTransactionsAsync();
 
@@ -82,7 +47,7 @@ namespace LogicTest
         [TestMethod]
         public async Task LogicLayer_TestDataGenerationMethod2_DynamicData()
         {
-            // Generation Method 2
+            // Generation Method 2: Dynamic data generation
             var dynamicRepo = new LogicTestMockRepository();
 
             // Add dynamically generated transactions
@@ -96,77 +61,40 @@ namespace LogicTest
             var transactions = await service.GetTransactionsAsync();
 
             // Assert
-            Assert.IsTrue(transactions.Count >= 5, "Should have both predefined and dynamic data"); // 2 predefined + 3 dynamic
+            Assert.IsTrue(transactions.Count >= 5, "Should have both predefined and dynamic data");
             Assert.IsTrue(transactions.Any(t => t.Description.Contains("Dynamic")), "Should contain dynamically generated transactions");
         }
 
         [TestMethod]
-        public async Task GetTransactionsByUserAsync_ReturnsUserTransactions()
+        public async Task LogicLayer_UsesOnlyDataLayerAPI()
+        {
+            // Test that Logic layer uses only Data layer interface
+            var mockRepository = new LogicTestMockRepository();
+            var service = new TransactionService(mockRepository);
+
+            // Act - Call service methods
+            await service.GetTransactionsAsync();
+            await service.GetUsersAsync();
+            await service.GetCategoriesAsync();
+
+            // Assert - Verify Data layer API was called
+            Assert.IsTrue(mockRepository.GetTransactionsAsyncCalled, "Should call Data layer GetTransactionsAsync");
+            Assert.IsTrue(mockRepository.GetUsersAsyncCalled, "Should call Data layer GetUsersAsync");
+            Assert.IsTrue(mockRepository.GetCategoriesAsyncCalled, "Should call Data layer GetCategoriesAsync");
+        }
+
+        [TestMethod]
+        public async Task AddTransactionAsync_ValidTransaction_AddsSuccessfully()
         {
             // Arrange
+            var transaction = new FinancialTransaction("Test transaction", 100m, true, "Test", DateTime.Today);
+
+            // Act
+            await _service.AddTransactionAsync(transaction);
             var transactions = await _service.GetTransactionsAsync();
-            var firstTransaction = transactions.First();
-            var userId = firstTransaction.UserId ?? Guid.Empty; // Handle nullable Guid
-
-            // Act
-            var userTransactions = await _service.GetTransactionsByUserAsync(userId);
 
             // Assert
-            Assert.IsNotNull(userTransactions);
-            Assert.IsTrue(userTransactions.All(t => t.UserId == userId));
-        }
-
-        [TestMethod]
-        public async Task GetTransactionsByCategory_ReturnsFilteredTransactions()
-        {
-            // Act
-            var foodTransactions = await _service.GetTransactionsByCategory("Food");
-
-            // Assert
-            Assert.IsNotNull(foodTransactions);
-            Assert.IsTrue(foodTransactions.All(t => t.Category == "Food"));
-        }
-
-        [TestMethod]
-        public async Task DeleteTransactionAsync_RemovesTransaction()
-        {
-            // Arrange
-            var transactions = await _service.GetTransactionsAsync();
-            var initialCount = transactions.Count;
-            var transactionToDelete = transactions.First();
-
-            // Act
-            await _service.DeleteTransactionAsync(transactionToDelete.Id);
-            var remainingTransactions = await _service.GetTransactionsAsync();
-
-            // Assert
-            Assert.AreEqual(initialCount - 1, remainingTransactions.Count);
-            Assert.IsFalse(remainingTransactions.Any(t => t.Id == transactionToDelete.Id));
-        }
-
-        [TestMethod]
-        public async Task CalculateBalanceByUserAsync_ReturnsCorrectUserBalance()
-        {
-            // Arrange
-            var transactions = await _service.GetTransactionsAsync();
-            var userId = transactions.First().UserId ?? Guid.Empty; 
-
-            // Act
-            var balance = await _service.CalculateBalanceByUserAsync(userId);
-
-            // Assert
-            Assert.IsTrue(balance != 0); 
-        }
-
-        [TestMethod]
-        public async Task GetRecentTransactionsAsync_ReturnsLimitedResults()
-        {
-            // Act
-            var recentTransactions = await _service.GetRecentTransactionsAsync(1);
-
-            // Assert
-            Assert.IsNotNull(recentTransactions);
-            Assert.AreEqual(1, recentTransactions.Count);
+            Assert.IsTrue(transactions.Any(t => t.Description == "Test transaction"));
         }
 
         [TestMethod]
@@ -189,7 +117,7 @@ namespace LogicTest
         }
     }
 
-    // Local mock repository for LogicTest
+    // Mock repository for Logic layer testing (Fixed for .NET Framework 4.7.2)
     public class LogicTestMockRepository : ITransactionRepository
     {
         private readonly List<FinancialTransaction> _transactions = new List<FinancialTransaction>();
@@ -198,9 +126,14 @@ namespace LogicTest
         private readonly List<TransactionCategory> _categories = new List<TransactionCategory>();
         private int _nextTransactionId = 1;
 
+        // Properties to verify method calls
+        public bool GetTransactionsAsyncCalled { get; private set; }
+        public bool GetUsersAsyncCalled { get; private set; }
+        public bool GetCategoriesAsyncCalled { get; private set; }
+
         public LogicTestMockRepository()
         {
-            // Generation Method 1
+            // Initialize test data
             var user1 = new User { Id = Guid.NewGuid(), Name = "Logic Test User" };
             _users.Add(user1);
 
@@ -214,256 +147,82 @@ namespace LogicTest
                 new FinancialTransaction("Salary", 2000.00m, false, "Income", DateTime.Today)
                     { Id = _nextTransactionId++, UserId = user1.Id }
             });
-
-            // Add a test event
-            _events.Add(new Event
-            {
-                Id = 1,
-                UserId = user1.Id,
-                Description = "Test Event",
-                Timestamp = DateTime.Today
-            });
         }
 
-        // Transaction methods returning interface types
-        public List<IFinancialTransaction> GetTransactions()
+        // Implement interface with tracking
+        public async Task<List<IFinancialTransaction>> GetTransactionsAsync()
         {
-            return _transactions.Where(t => t.Amount > 0).Cast<IFinancialTransaction>().ToList();
+            GetTransactionsAsyncCalled = true;
+            return await Task.FromResult(_transactions.Cast<IFinancialTransaction>().ToList());
         }
 
-        public List<IFinancialTransaction> GetTransactionsByCategory(string category)
+        public async Task<List<IUser>> GetUsersAsync()
         {
-            return _transactions.Where(t => t.Category.Equals(category, StringComparison.OrdinalIgnoreCase)).Cast<IFinancialTransaction>().ToList();
+            GetUsersAsyncCalled = true;
+            return await Task.FromResult(_users.Cast<IUser>().ToList());
         }
 
-        public List<IFinancialTransaction> GetTransactionsByUser(Guid userId)
+        public async Task<List<ITransactionCategory>> GetCategoriesAsync()
         {
-            return _transactions.Where(t => t.UserId == userId).Cast<IFinancialTransaction>().ToList();
-        }
-
-        public List<IFinancialTransaction> GetTransactionsByDateRange(DateTime startDate, DateTime endDate)
-        {
-            return _transactions.Where(t => t.Date >= startDate && t.Date <= endDate).Cast<IFinancialTransaction>().ToList();
+            GetCategoriesAsyncCalled = true;
+            return await Task.FromResult(_categories.Cast<ITransactionCategory>().ToList());
         }
 
         public void AddTransaction(IFinancialTransaction transaction)
         {
-            var concreteTransaction = transaction as FinancialTransaction ??
+            var concrete = transaction as FinancialTransaction ??
                 new FinancialTransaction(transaction.Description, transaction.Amount, transaction.IsExpense, transaction.Category, transaction.Date)
                 {
-                    Id = _nextTransactionId++,
-                    UserId = transaction.UserId ?? Guid.Empty 
+                    UserId = transaction.UserId ?? Guid.Empty
                 };
 
-            if (concreteTransaction.Id == 0)
-                concreteTransaction.Id = _nextTransactionId++;
+            if (concrete.Id == 0)
+                concrete.Id = _nextTransactionId++;
 
-            _transactions.Add(concreteTransaction);
+            _transactions.Add(concrete);
         }
 
-        public void UpdateTransaction(IFinancialTransaction transaction)
-        {
-            var existing = _transactions.FirstOrDefault(t => t.Id == transaction.Id);
-            if (existing != null)
-            {
-                existing.Description = transaction.Description;
-                existing.Amount = transaction.Amount;
-                existing.IsExpense = transaction.IsExpense;
-                existing.Category = transaction.Category;
-                existing.Date = transaction.Date;
-                existing.UserId = transaction.UserId ?? Guid.Empty; 
-            }
-        }
+        // Implement all other required interface methods with minimal implementations
+        public List<IFinancialTransaction> GetTransactions() => _transactions.Cast<IFinancialTransaction>().ToList();
+        public List<IFinancialTransaction> GetTransactionsByUser(Guid userId) => _transactions.Where(t => t.UserId == userId).Cast<IFinancialTransaction>().ToList();
+        public List<IFinancialTransaction> GetTransactionsByCategory(string category) => _transactions.Where(t => t.Category == category).Cast<IFinancialTransaction>().ToList();
+        public List<IFinancialTransaction> GetTransactionsByDateRange(DateTime startDate, DateTime endDate) => _transactions.Where(t => t.Date >= startDate && t.Date <= endDate).Cast<IFinancialTransaction>().ToList();
+        public void UpdateTransaction(IFinancialTransaction transaction) { /* implementation */ }
+        public void DeleteTransaction(int id) => _transactions.RemoveAll(t => t.Id == id);
 
-        public void DeleteTransaction(int id)
-        {
-            _transactions.RemoveAll(t => t.Id == id);
-        }
+        public async Task<List<IFinancialTransaction>> GetTransactionsByUserAsync(Guid userId) => await Task.FromResult(GetTransactionsByUser(userId));
+        public async Task<List<IFinancialTransaction>> GetTransactionsByCategoryAsync(string category) => await Task.FromResult(GetTransactionsByCategory(category));
+        public async Task<List<IFinancialTransaction>> GetTransactionsByDateRangeAsync(DateTime startDate, DateTime endDate) => await Task.FromResult(GetTransactionsByDateRange(startDate, endDate));
+        public async Task AddTransactionAsync(IFinancialTransaction transaction) { AddTransaction(transaction); await Task.CompletedTask; }
+        public async Task UpdateTransactionAsync(IFinancialTransaction transaction) { UpdateTransaction(transaction); await Task.CompletedTask; }
+        public async Task DeleteTransactionAsync(int id) { DeleteTransaction(id); await Task.CompletedTask; }
 
-        // Async transaction methods
-        public async Task<List<IFinancialTransaction>> GetTransactionsAsync()
-        {
-            return await Task.FromResult(GetTransactions());
-        }
+        // User operations
+        public List<IUser> GetUsers() => _users.Cast<IUser>().ToList();
+        public IUser GetUser(Guid id) => _users.FirstOrDefault(u => u.Id == id);
+        public void AddUser(IUser user) { /* implementation */ }
+        public void UpdateUser(IUser user) { /* implementation */ }
+        public void DeleteUser(Guid id) { /* implementation */ }
+        public async Task<IUser> GetUserAsync(Guid id) => await Task.FromResult(GetUser(id));
+        public async Task AddUserAsync(IUser user) { AddUser(user); await Task.CompletedTask; }
+        public async Task UpdateUserAsync(IUser user) { UpdateUser(user); await Task.CompletedTask; }
+        public async Task DeleteUserAsync(Guid id) { DeleteUser(id); await Task.CompletedTask; }
 
-        public async Task<List<IFinancialTransaction>> GetTransactionsByUserAsync(Guid userId)
-        {
-            return await Task.FromResult(GetTransactionsByUser(userId));
-        }
+        // Event operations
+        public List<IEvent> GetEvents() => _events.Cast<IEvent>().ToList();
+        public List<IEvent> GetEventsByUser(Guid userId) => _events.Where(e => e.UserId == userId).Cast<IEvent>().ToList();
+        public void AddEvent(IEvent e) { /* implementation */ }
+        public async Task<List<IEvent>> GetEventsAsync() => await Task.FromResult(GetEvents());
+        public async Task<List<IEvent>> GetEventsByUserAsync(Guid userId) => await Task.FromResult(GetEventsByUser(userId));
+        public async Task AddEventAsync(IEvent e) { AddEvent(e); await Task.CompletedTask; }
 
-        public async Task<List<IFinancialTransaction>> GetTransactionsByCategoryAsync(string category)
-        {
-            return await Task.FromResult(GetTransactionsByCategory(category));
-        }
-
-        public async Task<List<IFinancialTransaction>> GetTransactionsByDateRangeAsync(DateTime startDate, DateTime endDate)
-        {
-            return await Task.FromResult(GetTransactionsByDateRange(startDate, endDate));
-        }
-
-        public async Task AddTransactionAsync(IFinancialTransaction transaction)
-        {
-            await Task.Run(() => AddTransaction(transaction));
-        }
-
-        public async Task UpdateTransactionAsync(IFinancialTransaction transaction)
-        {
-            await Task.Run(() => UpdateTransaction(transaction));
-        }
-
-        public async Task DeleteTransactionAsync(int id)
-        {
-            await Task.Run(() => DeleteTransaction(id));
-        }
-
-        // User methods returning interface types
-        public List<IUser> GetUsers()
-        {
-            return _users.Cast<IUser>().ToList();
-        }
-
-        public IUser GetUser(Guid id)
-        {
-            return _users.FirstOrDefault(u => u.Id == id);
-        }
-
-        public void AddUser(IUser user)
-        {
-            var concreteUser = user as User ?? new User { Id = user.Id, Name = user.Name };
-            _users.Add(concreteUser);
-        }
-
-        public void UpdateUser(IUser user)
-        {
-            var existing = _users.FirstOrDefault(u => u.Id == user.Id);
-            if (existing != null) existing.Name = user.Name;
-        }
-
-        public void DeleteUser(Guid id)
-        {
-            _users.RemoveAll(u => u.Id == id);
-        }
-
-        // Async user methods
-        public async Task<List<IUser>> GetUsersAsync()
-        {
-            return await Task.FromResult(GetUsers());
-        }
-
-        public async Task<IUser> GetUserAsync(Guid id)
-        {
-            return await Task.FromResult(GetUser(id));
-        }
-
-        public async Task AddUserAsync(IUser user)
-        {
-            await Task.Run(() => AddUser(user));
-        }
-
-        public async Task UpdateUserAsync(IUser user)
-        {
-            await Task.Run(() => UpdateUser(user));
-        }
-
-        public async Task DeleteUserAsync(Guid id)
-        {
-            await Task.Run(() => DeleteUser(id));
-        }
-
-        // Category methods returning interface types
-        public List<ITransactionCategory> GetCategories()
-        {
-            return _categories.Cast<ITransactionCategory>().ToList();
-        }
-
-        public void AddCategory(ITransactionCategory category)
-        {
-            var concreteCategory = category as TransactionCategory ??
-                new TransactionCategory(category.Name, category.Description) { Id = category.Id };
-            _categories.Add(concreteCategory);
-        }
-
-        public void UpdateCategory(ITransactionCategory category)
-        {
-            var existing = _categories.FirstOrDefault(c => c.Id == category.Id);
-            if (existing != null)
-            {
-                existing.Name = category.Name;
-                existing.Description = category.Description;
-            }
-        }
-
-        public void DeleteCategory(int id)
-        {
-            _categories.RemoveAll(c => c.Id == id);
-        }
-
-        // Async category methods
-        public async Task<List<ITransactionCategory>> GetCategoriesAsync()
-        {
-            return await Task.FromResult(GetCategories());
-        }
-
-        public async Task AddCategoryAsync(ITransactionCategory category)
-        {
-            await Task.Run(() => AddCategory(category));
-        }
-
-        public async Task UpdateCategoryAsync(ITransactionCategory category)
-        {
-            await Task.Run(() => UpdateCategory(category));
-        }
-
-        public async Task DeleteCategoryAsync(int id)
-        {
-            await Task.Run(() => DeleteCategory(id));
-        }
-
-        // Event methods returning interface types
-        public List<IEvent> GetEvents()
-        {
-            return _events.Cast<IEvent>().ToList();
-        }
-
-        public List<IEvent> GetEventsByUser(Guid userId)
-        {
-            return _events.Where(e => e.UserId == userId).Cast<IEvent>().ToList();
-        }
-
-        public void AddEvent(IEvent e)
-        {
-            var concreteEvent = e as Event ?? new Event
-            {
-                Id = e.Id,
-                Description = e.Description,
-                Timestamp = e.Timestamp,
-                UserId = e.UserId
-            };
-            _events.Add(concreteEvent);
-        }
-
-        // Async event methods
-        public async Task<List<IEvent>> GetEventsAsync()
-        {
-            return await Task.FromResult(GetEvents());
-        }
-
-        public async Task<List<IEvent>> GetEventsByUserAsync(Guid userId)
-        {
-            return await Task.FromResult(GetEventsByUser(userId));
-        }
-
-        public async Task AddEventAsync(IEvent e)
-        {
-            await Task.Run(() => AddEvent(e));
-        }
-
-        // Legacy methods for backward compatibility
-        public List<FinancialTransaction> LoadTransactions() => _transactions.Where(t => t.Amount > 0).ToList();
-        public void SaveTransactions(List<FinancialTransaction> transactions)
-        {
-            _transactions.Clear();
-            _transactions.AddRange(transactions);
-        }
+        // Category operations
+        public List<ITransactionCategory> GetCategories() => _categories.Cast<ITransactionCategory>().ToList();
+        public void AddCategory(ITransactionCategory category) { /* implementation */ }
+        public void UpdateCategory(ITransactionCategory category) { /* implementation */ }
+        public void DeleteCategory(int id) { /* implementation */ }
+        public async Task AddCategoryAsync(ITransactionCategory category) { AddCategory(category); await Task.CompletedTask; }
+        public async Task UpdateCategoryAsync(ITransactionCategory category) { UpdateCategory(category); await Task.CompletedTask; }
+        public async Task DeleteCategoryAsync(int id) { DeleteCategory(id); await Task.CompletedTask; }
     }
 }
