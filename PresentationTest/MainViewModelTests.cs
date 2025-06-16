@@ -12,7 +12,6 @@ namespace PresentationTest
 {
     /// <summary>
     /// Tests for the MVVM structure - Tests ViewModel independently with dependency injection
-    /// FIXED: Uses composition instead of inheritance for proper layer separation
     /// </summary>
     [TestClass]
     public class MainViewModelTests
@@ -50,7 +49,7 @@ namespace PresentationTest
 
             Assert.AreEqual(0, _viewModel.Transactions.Count, "Transactions should be cleared");
 
-            // Add test data using mock objects (avoiding direct Data layer references)
+            // Add test data using mock objects 
             _viewModel.Transactions.Add(new MockTransaction { Amount = 1000m, IsExpense = false, Description = "Income" });
             _viewModel.Transactions.Add(new MockTransaction { Amount = 300m, IsExpense = true, Description = "Expense" });
 
@@ -69,7 +68,7 @@ namespace PresentationTest
             var testTransaction = new MockTransaction { Id = 1, Description = "Test Transaction", Amount = 100m, IsExpense = true, Category = "Test" };
             _viewModel.Transactions.Add(testTransaction);
 
-            // Act - select transaction (Detail view)
+            // Act - select transaction
             _viewModel.SelectedTransaction = testTransaction;
 
             // Assert - Master-Detail binding works
@@ -111,7 +110,6 @@ namespace PresentationTest
         public async Task ViewModel_UsesOnlyModelLayerAPI()
         {
             // Test that ViewModel uses only Model layer, not Logic layer directly
-            // This verifies the proper MVVM architecture: View → ViewModel → Model → Logic
 
             // Act - trigger data loading
             _viewModel.LoadDataCommand.Execute(null);
@@ -172,8 +170,6 @@ namespace PresentationTest
         [TestMethod]
         public async Task ViewModel_DependencyInjection_WorksForTesting()
         {
-            // Test requirement: "View Model use dependency injection for testing purpose"
-
             // Create alternative mock for different test scenario
             var alternativeMock = new TestFinancialDataModel();
             var alternativeViewModel = new MainViewModel(alternativeMock);
@@ -228,7 +224,6 @@ namespace PresentationTest
 
     /// <summary>
     /// Test Model for independent ViewModel testing
-    /// FIXED: Uses override instead of new keyword for proper method overriding
     /// </summary>
     public class TestFinancialDataModel : FinancialDataModel
     {

@@ -286,8 +286,6 @@ namespace Presentation.ViewModel
 
         public async Task WaitForInitializationAsync()
         {
-            // Give some time for the initial load to complete
-            // Tests can call this method to ensure data is loaded
             await Task.Delay(50);
 
             // If collections are still empty, try loading again
