@@ -10,7 +10,6 @@
 		<PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.5" />
 	</ItemGroup>
 	<ItemGroup>
-		<!-- Add reference to System.Data.Linq for LINQ to SQL -->
 		<Reference Include="System.Data.Linq" />
 	</ItemGroup>
 </Project>

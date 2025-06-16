@@ -6,7 +6,6 @@
 		<LangVersion>10.0</LangVersion>
 		<Nullable>disable</Nullable>
 		
-		<!-- Custom Assembly Information -->
 		<AssemblyTitle>SpendWise Presentation Model</AssemblyTitle>
 		<AssemblyDescription>Data models for SpendWise presentation layer</AssemblyDescription>
 		<AssemblyCompany>SpendWise Solutions</AssemblyCompany>
@@ -20,7 +19,6 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-		<!-- Add Microsoft.CSharp for dynamic binding support -->
 		<Reference Include="Microsoft.CSharp" />
 	</ItemGroup>
 	

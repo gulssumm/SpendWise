@@ -7,7 +7,6 @@
 		<LangVersion>10.0</LangVersion>
 		<Nullable>disable</Nullable>
 		
-		<!-- Custom Assembly Information -->
 		<AssemblyTitle>SpendWise</AssemblyTitle>
 		<AssemblyDescription>SpendWise Financial Tracker - WPF Application</AssemblyDescription>
 		<AssemblyCompany>SpendWise Solutions</AssemblyCompany>
@@ -17,14 +16,11 @@
 	</PropertyGroup>
 	
 	<ItemGroup>
-		<!-- Add Microsoft.CSharp for dynamic binding support -->
 		<Reference Include="Microsoft.CSharp" />
 	</ItemGroup>
 	
 	<ItemGroup>
 		<ProjectReference Include="..\Presentation.ViewModel\Presentation.ViewModel.csproj" />
 		<ProjectReference Include="..\Presentation.Model\Presentation.Model.csproj" />
-		<!-- <ProjectReference Include="..\Data\Data.csproj" /> -->
-		<!-- <ProjectReference Include="..\Logic\Logic.csproj" /> -->
 	</ItemGroup>
 </Project>
